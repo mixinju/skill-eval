@@ -1,47 +1,41 @@
 package tool
 
-import "github.com/openai/openai-go/v3"
+import (
+    "context"
+    "fmt"
+)
 
 type GetWeather struct {
 }
 
-func (w *GetWeather) Prams() openai.FunctionParameters {
+// Query 定义查询天气的工具
+func (w *GetWeather) Query(ctx context.Context, params map[string]any) (string, error) {
+    city, ok := params["city"].(string)
+    if !ok {
+        return "", fmt.Errorf("param 'city' is required")
+    }
 
-    f := openai.FunctionParameters{
+    s := fmt.Sprintf(" %s 城市的温度是23-28摄氏度", city)
+
+    return s, nil
+}
+
+// GetTools 返回所有执行的tool
+func (w *GetWeather) GetTools() []Tool {
+
+    queryPrams := map[string]any{
         "type": "object",
-        "properties": map[string]interface{}{
-            "location": map[string]string{
-                "type":        "string",
-                "description": "城市名称,例如北京、上海",
+        "properties": map[string]any{
+            "location": map[string]any{
+                "type": "string",
             },
         },
         "required": []string{"location"},
     }
-
-    return f
-}
-
-func (w *GetWeather) Definition() openai.FunctionDefinitionParam {
-    df := openai.FunctionDefinitionParam{
-        Name:        "get_weather",
-        Description: openai.String("获取某一个地区的天气"),
-        Parameters:  w.Prams(),
+    tools := []Tool{
+        NewBaseToolInfo("get_weather", "查询天气", queryPrams, w.Query),
     }
 
-    return df
-}
+    return tools
 
-func (w *GetWeather) ToolParams() openai.ChatCompletionToolUnionParam {
-
-    t := openai.ChatCompletionToolUnionParam{
-        OfFunction: &openai.ChatCompletionFunctionToolParam{Function: w.Definition()},
-    }
-
-    return t
-}
-
-func (w *GetWeather) Query(location string) string {
-    s := "北京今天多云，最高23-38摄氏度"
-
-    return s
 }

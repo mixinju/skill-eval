@@ -17,14 +17,12 @@ const (
     apiKey  = "412354e1dc5e4570b60665b46bde29fe.9n288zD658ySKAo1"
 )
 
-func Chat() {
+func Chat(messages []openai.ChatCompletionMessageParamUnion) {
 
     client := openai.NewClient(
         option.WithAPIKey(apiKey),
         option.WithBaseURL(baseUrl),
     )
-
-    var messages []openai.ChatCompletionMessageParamUnion
 
     messages = append(messages, openai.UserMessage("今天北京的天气怎么样"))
 

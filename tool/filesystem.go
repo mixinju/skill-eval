@@ -6,8 +6,6 @@ import (
     "os"
     "path/filepath"
     "strings"
-
-    "github.com/openai/openai-go/v3"
 )
 
 type FileSystem struct {
@@ -16,23 +14,8 @@ type FileSystem struct {
     workspace    string // 工作区路径，用于配置文件更新
 }
 
-func (f *FileSystem) Prams() openai.FunctionParameters {
-    //TODO implement me
-    panic("implement me")
-}
-
-func (f *FileSystem) Definition() openai.FunctionDefinitionParam {
-    //TODO implement me
-    panic("implement me")
-}
-
-func (f *FileSystem) ToolParams() openai.ChatCompletionToolUnionParam {
-    //TODO implement me
-    panic("implement me")
-}
-
 // ReadFile 读取文件
-func (f *FileSystem) ReadFile(ctx context.Context, params map[string]interface{}) (string, error) {
+func (f *FileSystem) ReadFile(ctx context.Context, params map[string]any) (string, error) {
     path, ok := params["path"].(string)
     if !ok {
         return "", fmt.Errorf("path parameter is required")
@@ -52,7 +35,7 @@ func (f *FileSystem) ReadFile(ctx context.Context, params map[string]interface{}
 }
 
 // WriteFile 写入文件
-func (f *FileSystem) WriteFile(ctx context.Context, params map[string]interface{}) (string, error) {
+func (f *FileSystem) WriteFile(ctx context.Context, params map[string]any) (string, error) {
     path, ok := params["path"].(string)
     if !ok {
         return "", fmt.Errorf("path parameter is required")
@@ -83,7 +66,7 @@ func (f *FileSystem) WriteFile(ctx context.Context, params map[string]interface{
 }
 
 // EditFile 编辑文件（精确字符串替换）
-func (f *FileSystem) EditFile(ctx context.Context, params map[string]interface{}) (string, error) {
+func (f *FileSystem) EditFile(ctx context.Context, params map[string]any) (string, error) {
     path, ok := params["path"].(string)
     if !ok {
         return "", fmt.Errorf("path parameter is required")
@@ -132,7 +115,7 @@ func (f *FileSystem) EditFile(ctx context.Context, params map[string]interface{}
 }
 
 // ListDir 列出目录
-func (f *FileSystem) ListDir(ctx context.Context, params map[string]interface{}) (string, error) {
+func (f *FileSystem) ListDir(ctx context.Context, params map[string]any) (string, error) {
     path, ok := params["path"].(string)
     if !ok {
         return "", fmt.Errorf("path parameter is required")
@@ -161,7 +144,7 @@ func (f *FileSystem) ListDir(ctx context.Context, params map[string]interface{})
 }
 
 // UpdateConfig 更新配置文件
-func (f *FileSystem) UpdateConfig(ctx context.Context, params map[string]interface{}) (string, error) {
+func (f *FileSystem) UpdateConfig(ctx context.Context, params map[string]any) (string, error) {
     fileType, ok := params["file"].(string)
     if !ok {
         return "", fmt.Errorf("file parameter is required (identity, agents, soul, or user)")
@@ -205,7 +188,7 @@ func (f *FileSystem) UpdateConfig(ctx context.Context, params map[string]interfa
 }
 
 // ReadConfig 读取配置文件
-func (f *FileSystem) ReadConfig(ctx context.Context, params map[string]interface{}) (string, error) {
+func (f *FileSystem) ReadConfig(ctx context.Context, params map[string]any) (string, error) {
     fileType, ok := params["file"].(string)
     if !ok {
         return "", fmt.Errorf("file parameter is required (identity, agents, soul, or user)")
