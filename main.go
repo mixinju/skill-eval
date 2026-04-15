@@ -4,5 +4,5 @@ import "skill-eval/providers"
 
 func main() {
 
-    providers.Chat()
+    providers.Chat(nil)
 }
