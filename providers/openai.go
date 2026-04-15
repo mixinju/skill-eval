@@ -16,8 +16,8 @@ import (
 )
 
 const (
-	baseURL = "https:newapi.sankuai.com"
-	apiKey  = "sk-89mOFvu7We1ctc76YcQk3QuWnrUbXQ9zp3svMFBExqtz2YP1"
+	baseURL = ""
+	apiKey  = "sk-"
 	model   = "glm-5"
 
 	maxLLMRetry      = 3
