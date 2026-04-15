@@ -1,0 +1,137 @@
+{
+  "suite_id": "pdf-skill-auto-suite-v1",
+  "groups": [
+    {
+      "group_id": "pdf-text-extraction-basic",
+      "cases": [
+        {
+          "id": "pdf-text-001",
+          "input": "我有一个 PDF 文件 /Users/mixinju/Desktop/AI Max普通用户手册-4.5.1.pdf，请提取全文文本并按页分段输出。",
+          "expectation": "识别需要使用 PDF 文本提取能力，给出按页提取方案并产出可读结果。",
+          "tags": ["pdf", "extract_text", "basic"]
+        },
+        {
+          "id": "pdf-text-002",
+          "input": "请从 /Users/mixinju/Desktop/WechatIMG14(1).pdf 只提取第 1 到 3 页的文本，并保留布局。",
+          "expectation": "能限定页码范围并说明 layout 保留方式（例如 pdftotext -layout 或等效方案）。",
+          "tags": ["pdf", "extract_text", "page_range", "layout"]
+        },
+        {
+          "id": "pdf-text-003",
+          "input": "从 /Users/mixinju/Desktop/梁懿豪.pdf 中提取文本后，统计每页字符数并输出 JSON。",
+          "expectation": "提取文本后进行结构化后处理，返回可机器消费的统计结果。",
+          "tags": ["pdf", "extract_text", "post_process", "json"]
+        }
+      ]
+    },
+    {
+      "group_id": "pdf-table-extraction",
+      "cases": [
+        {
+          "id": "pdf-table-001",
+          "input": "请从 /Users/mixinju/Desktop/副本匹克球训练签到表.pdf 里提取所有表格，输出为 CSV 文件。",
+          "expectation": "识别表格提取场景，选用 pdfplumber 等能力并输出表格结果文件。",
+          "tags": ["pdf", "tables", "csv"]
+        },
+        {
+          "id": "pdf-table-002",
+          "input": "提取 /Users/mixinju/Desktop/副本匹克球训练签到表.pdf 的所有表格并合并成一个 Excel，注意跳过空表。",
+          "expectation": "支持跨页表格聚合、空表过滤、导出 Excel。",
+          "tags": ["pdf", "tables", "excel", "aggregation"]
+        },
+        {
+          "id": "pdf-table-003",
+          "input": "把 /Users/mixinju/Desktop/副本匹克球训练签到表.pdf 的表格抽取后，按“产品名-价格”生成 JSON 数组。",
+          "expectation": "不仅抽取表格，还能进行字段映射和结构化转换。",
+          "tags": ["pdf", "tables", "json", "transform"]
+        }
+      ]
+    },
+    {
+      "group_id": "pdf-merge-split-rotate",
+      "cases": [
+        {
+          "id": "pdf-ops-001",
+          "input": "合并 /Users/mixinju/Desktop/梁懿豪.pdf /Users/mixinju/Desktop/WechatIMG14(1).pdf /Users/mixinju/Desktop/副本匹克球训练签到表.pdf 为 /Users/mixinju/Desktop/skill-eval/artifacts/merged.pdf。",
+          "expectation": "正确选择合并策略并生成目标 PDF。",
+          "tags": ["pdf", "merge"]
+        },
+        {
+          "id": "pdf-ops-002",
+          "input": "将 /Users/mixinju/Desktop/AI Max普通用户手册-4.5.1.pdf 拆分成单页 PDF，命名为 page_1.pdf, page_2.pdf ...",
+          "expectation": "正确执行分页拆分并输出多文件。",
+          "tags": ["pdf", "split"]
+        },
+        {
+          "id": "pdf-ops-003",
+          "input": "把 /Users/mixinju/Desktop/WechatIMG14(1).pdf 的第 1 页顺时针旋转 90 度，输出 /Users/mixinju/Desktop/skill-eval/artifacts/scan_rotated.pdf。",
+          "expectation": "支持按页旋转并保留其他页内容。",
+          "tags": ["pdf", "rotate", "page_operation"]
+        }
+      ]
+    },
+    {
+      "group_id": "pdf-form-watermark-password",
+      "cases": [
+        {
+          "id": "pdf-form-001",
+          "input": "请把 /Users/mixinju/Desktop/AI Max普通用户手册-4.5.1.pdf 里的表单字段填好：name=Alice, email=alice@example.com，并导出 /Users/mixinju/Desktop/skill-eval/artifacts/form_filled.pdf（如果无表单字段请明确说明）。",
+          "expectation": "识别为表单填充场景，调用正确流程并输出已填充 PDF。",
+          "tags": ["pdf", "forms", "fill"]
+        },
+        {
+          "id": "pdf-form-002",
+          "input": "给 /Users/mixinju/Desktop/梁懿豪.pdf 每一页添加水印（使用 /Users/mixinju/Desktop/WechatIMG14(1).pdf 的第一页作为水印），输出 /Users/mixinju/Desktop/skill-eval/artifacts/contract_wm.pdf。",
+          "expectation": "识别并执行逐页水印叠加。",
+          "tags": ["pdf", "watermark"]
+        },
+        {
+          "id": "pdf-form-003",
+          "input": "把 /Users/mixinju/Desktop/梁懿豪.pdf 加密为 /Users/mixinju/Desktop/skill-eval/artifacts/public_encrypted.pdf，user 密码 123456，owner 密码 admin123。",
+          "expectation": "执行加密并清晰说明读写密码设置。",
+          "tags": ["pdf", "encrypt", "security"]
+        }
+      ]
+    },
+    {
+      "group_id": "pdf-ocr-and-images",
+      "cases": [
+        {
+          "id": "pdf-ocr-001",
+          "input": "这是扫描版 PDF：/Users/mixinju/Desktop/WechatIMG14(1).pdf，请 OCR 提取文本并按页输出。",
+          "expectation": "识别扫描件 OCR 需求，采用 pdf2image + pytesseract 等链路。",
+          "tags": ["pdf", "ocr", "scanned"]
+        },
+        {
+          "id": "pdf-ocr-002",
+          "input": "从 /Users/mixinju/Desktop/AI Max普通用户手册-4.5.1.pdf 中提取所有嵌入图片，保存到 /Users/mixinju/Desktop/skill-eval/artifacts/images/。",
+          "expectation": "正确使用图片提取能力（例如 pdfimages）并输出文件清单。",
+          "tags": ["pdf", "images", "extract"]
+        }
+      ]
+    },
+    {
+      "group_id": "pdf-error-handling-and-robustness",
+      "cases": [
+        {
+          "id": "pdf-err-001",
+          "input": "请提取 /Users/mixinju/Desktop/not_found.pdf 的文本。",
+          "expectation": "当文件不存在时应返回清晰错误，不应伪造成功结果。",
+          "tags": ["pdf", "error_handling", "missing_file"]
+        },
+        {
+          "id": "pdf-err-002",
+          "input": "请解密 /Users/mixinju/Desktop/skill-eval/artifacts/public_encrypted.pdf，但密码未知。",
+          "expectation": "应正确提示缺少密码并给出后续操作建议。",
+          "tags": ["pdf", "error_handling", "encrypted"]
+        },
+        {
+          "id": "pdf-err-003",
+          "input": "把 /Users/mixinju/Desktop/梁懿豪.pdf 和 /Users/mixinju/Desktop/外卖骑手劳动关系认定与权益保障问题研究.docx 合并成 PDF。",
+          "expectation": "识别输入类型不兼容并给出可执行替代方案，而不是错误执行。",
+          "tags": ["pdf", "robustness", "input_validation"]
+        }
+      ]
+    }
+  ]
+}

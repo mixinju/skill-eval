@@ -1,0 +1,22 @@
+{
+  "suite_id": "demo-suite-001",
+  "groups": [
+    {
+      "group_id": "basic-weather",
+      "cases": [
+        {
+          "id": "case-1",
+          "input": "今天北京天气怎么样",
+          "expectation": "应返回北京天气信息",
+          "tags": ["weather", "basic"]
+        },
+        {
+          "id": "case-2",
+          "input": "帮我查一下上海天气",
+          "expectation": "应返回上海天气信息",
+          "tags": ["weather", "city"]
+        }
+      ]
+    }
+  ]
+}
