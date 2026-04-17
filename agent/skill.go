@@ -1,4 +1,4 @@
-package skill
+package agent
 
 import (
     "bytes"
