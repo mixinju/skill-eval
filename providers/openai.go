@@ -14,7 +14,7 @@ import (
 
 const (
     baseUrl = "https://open.bigmodel.cn/api/paas/v4"
-    apiKey  = "412354e1dc5e4570b60665b46bde29fe.9n288zD658ySKAo1"
+    apiKey  = ""
 )
 
 func Chat(messages []openai.ChatCompletionMessageParamUnion) {
@@ -30,7 +30,6 @@ func Chat(messages []openai.ChatCompletionMessageParamUnion) {
     var tools []openai.ChatCompletionToolUnionParam
 
     weather := tool.GetWeather{}
-    tools = append(tools, weather.ToolParams())
 
     // 发起调用
     chatCompletion, err := client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{

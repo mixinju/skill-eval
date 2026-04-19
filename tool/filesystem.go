@@ -6,12 +6,14 @@ import (
     "os"
     "path/filepath"
     "strings"
+    "time"
 )
 
 type FileSystem struct {
     allowedPaths []string
     deniedPaths  []string
     workspace    string // 工作区路径，用于配置文件更新
+    timeout      time.Duration
 }
 
 // ReadFile 读取文件
@@ -21,6 +23,8 @@ func (f *FileSystem) ReadFile(ctx context.Context, params map[string]any) (strin
         return "", fmt.Errorf("path parameter is required")
     }
 
+    ctx, cancelFunc := context.WithTimeout(ctx, f.timeout)
+    defer cancelFunc()
     // 检查路径权限
     if !f.isAllowed(path) {
         return "", fmt.Errorf("access to path %s is not allowed", path)

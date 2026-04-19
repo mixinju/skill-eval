@@ -21,9 +21,8 @@ func (u *UseSkill) Exec(ctx context.Context, params map[string]any) (string, err
 }
 
 func (u *UseSkill) GetTools() []Tool {
-
     tools := []Tool{
-        NewBaseToolInfo("use_skill", "Select a skill to use for the current task. This loads the full skill content into the context.", u.Params(), u.Exec),
+        NewBaseToolInfo("use_skill", "选择使用一个SKILL，并加载SKILL具体的内容", u.Params(), u.Exec),
     }
 
     return tools
