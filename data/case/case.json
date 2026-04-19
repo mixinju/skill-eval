@@ -1,0 +1,8 @@
+[
+  {
+    "id": "pdf_create_multipage",
+    "name": "创建多页PDF文档",
+    "input": "请创建一个3页的中文PDF文档。第一页标题「第一章 概述」，内容为项目简介；第二页标题「第二章 技术方案」，内容为技术架构说明；第三页标题「第三章 总结」，内容为项目总结。保存为 multipage_doc.pdf",
+    "expected": "创建3页中文PDF文档，每页有独立标题和内容，使用reportlab的SimpleDocTemplate和PageBreak，注册CJK字体"
+  }
+]

@@ -1,15 +1,16 @@
 package agent
 
 import (
+    "skill-eval/skill"
+
     "github.com/openai/openai-go/v3"
 )
 
 type Agent struct {
     Name         string
+    Description  string
     Model        string
-    BaseURL      string
-    APIKey       string
-    Skill        *Skill
+    Skill        *skill.Skill
     MaxTokens    int
     MaxInters    int
     SystemPrompt string

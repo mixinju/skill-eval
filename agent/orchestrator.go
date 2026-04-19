@@ -1,34 +1,37 @@
 package agent
 
 import (
-    "context"
     "encoding/json"
     "fmt"
+    "log"
 
+    "skill-eval/providers"
+    "skill-eval/skill"
     "skill-eval/tool"
 
     "github.com/openai/openai-go/v3"
 )
 
-type Orchestrator struct{}
+type Orchestrator struct {
+    ModelProvider providers.OpenAIProvider
+}
 
 func NewOrchestrator() *Orchestrator {
     return &Orchestrator{}
 }
 
-type ChatFunc func(ctx context.Context, messages []openai.ChatCompletionMessageParamUnion, tools []tool.Tool) (*openai.ChatCompletion, error)
+type ChatFunc func(messages []openai.ChatCompletionMessageParamUnion, tools []tool.Tool) (*openai.ChatCompletion, error)
 
-func (o *Orchestrator) Run(ctx context.Context, ag *Agent, input string, workspace string, onEvent EventHandler, chat ChatFunc) *RunResult {
-    rc := NewRunContext(ag, workspace, onEvent)
+func (o *Orchestrator) Run(ag *Agent, input string, workspace string) *RunResult {
+    rc := NewRunContext(ag, workspace)
 
     systemMsg := ag.SystemPrompt
-    if ag.Skill != nil {
-        systemMsg += "\n\n## Skill\n" + ag.Skill.Content
-    }
+
     rc.State.Messages = append(rc.State.Messages, openai.SystemMessage(systemMsg))
     rc.State.Messages = append(rc.State.Messages, openai.UserMessage(input))
 
-    tools := buildTools(workspace, ag.Skill)
+    // 构建系统默认工具
+    tools := buildTools(workspace, *ag.Skill)
 
     toolMap := make(map[string]tool.Tool)
     for _, t := range tools {
@@ -38,20 +41,44 @@ func (o *Orchestrator) Run(ctx context.Context, ag *Agent, input string, workspa
     for rc.State.Iterations < ag.MaxInters {
         rc.State.Iterations++
 
-        completion, err := chat(ctx, rc.State.Messages, tools)
+        log.Printf("[%s] === Iteration %d/%d ===", ag.Name, rc.State.Iterations, ag.MaxInters)
+        log.Printf("[%s] Sending %d messages to LLM", ag.Name, len(rc.State.Messages))
+        for i, msg := range rc.State.Messages {
+            msgJSON, _ := json.Marshal(msg)
+            summary := string(msgJSON)
+            if len(summary) > 500 {
+                summary = summary[:500] + "...(truncated)"
+            }
+            log.Printf("[%s]   msg[%d]: %s", ag.Name, i, summary)
+        }
+
+        completion, err := o.ModelProvider.Chat(nil, ag.Model, rc.State.Messages, tools)
         if err != nil {
-            rc.Emit(Event{Type: EventError, Iteration: rc.State.Iterations, Data: err})
+            log.Printf("[%s] LLM error: %v", ag.Name, err)
+            rc.Emit(Event{Type: EventError, Iteration: rc.State.Iterations, Data: err.Error()})
             return buildResult(rc, StopError, "", nil, err)
         }
 
         if len(completion.Choices) == 0 {
             err := fmt.Errorf("llm returned empty choices")
-            rc.Emit(Event{Type: EventError, Iteration: rc.State.Iterations, Data: err})
+            log.Printf("[%s] LLM error: %v", ag.Name, err)
+            rc.Emit(Event{Type: EventError, Iteration: rc.State.Iterations, Data: err.Error()})
             return buildResult(rc, StopError, "", nil, err)
         }
 
         choice := completion.Choices[0]
         rc.State.TokensUsed += int(completion.Usage.TotalTokens)
+
+        contentPreview := choice.Message.Content
+        if len(contentPreview) > 300 {
+            contentPreview = contentPreview[:300] + "...(truncated)"
+        }
+        var toolNames []string
+        for _, tc := range choice.Message.ToolCalls {
+            toolNames = append(toolNames, tc.Function.Name)
+        }
+        log.Printf("[%s] LLM response: tokens=%d, content=%q, tool_calls=%v",
+            ag.Name, completion.Usage.TotalTokens, contentPreview, toolNames)
         rc.Emit(Event{Type: EventLLMCall, Iteration: rc.State.Iterations, Data: map[string]any{
             "content":    choice.Message.Content,
             "tool_calls": choice.Message.ToolCalls,
@@ -70,8 +97,12 @@ func (o *Orchestrator) Run(ctx context.Context, ag *Agent, input string, workspa
 
         for _, tc := range choice.Message.ToolCalls {
             if tc.Function.Name == "finish" {
+                log.Printf("[%s] Tool call: finish, args: %s", ag.Name, tc.Function.Arguments)
                 var args map[string]any
-                json.Unmarshal([]byte(tc.Function.Arguments), &args)
+                err := json.Unmarshal([]byte(tc.Function.Arguments), &args)
+                if err != nil {
+                    return nil
+                }
                 result, _ := args["result"].(string)
                 var artifacts []string
                 if raw, ok := args["artifacts"]; ok {
@@ -93,23 +124,37 @@ func (o *Orchestrator) Run(ctx context.Context, ag *Agent, input string, workspa
                 Input:     tc.Function.Arguments,
             }
 
+            inputPreview := tc.Function.Arguments
+            if len(inputPreview) > 300 {
+                inputPreview = inputPreview[:300] + "...(truncated)"
+            }
+            log.Printf("[%s] Tool call: %s, input: %s", ag.Name, tc.Function.Name, inputPreview)
+
             t, ok := toolMap[tc.Function.Name]
             var toolOutput string
             if !ok {
                 toolOutput = fmt.Sprintf("Error: unknown tool %q", tc.Function.Name)
                 record.Error = toolOutput
+                log.Printf("[%s] Tool error: %s", ag.Name, toolOutput)
             } else {
                 var params map[string]any
                 if err := json.Unmarshal([]byte(tc.Function.Arguments), &params); err != nil {
                     toolOutput = fmt.Sprintf("Error: invalid arguments: %s", err)
                     record.Error = toolOutput
+                    log.Printf("[%s] Tool error: %s", ag.Name, toolOutput)
                 } else {
                     output, err := t.Exec(ctx, params)
                     if err != nil {
                         toolOutput = fmt.Sprintf("Error: %s", err)
                         record.Error = err.Error()
+                        log.Printf("[%s] Tool %s error: %v", ag.Name, tc.Function.Name, err)
                     } else {
                         toolOutput = output
+                        outputPreview := output
+                        if len(outputPreview) > 300 {
+                            outputPreview = outputPreview[:300] + "...(truncated)"
+                        }
+                        log.Printf("[%s] Tool %s output: %s", ag.Name, tc.Function.Name, outputPreview)
                     }
                     record.Output = output
                 }
@@ -137,7 +182,7 @@ func buildResult(rc *RunContext, reason StopReason, finalOutput string, artifact
     }
 }
 
-func buildTools(workspace string, sk any) []tool.Tool {
+func buildTools(workspace string, skill skill.Skill) []tool.Tool {
     var tools []tool.Tool
 
     fs := tool.NewFileSystem(workspace)
