@@ -3,7 +3,6 @@ package agent
 import (
     "context"
     "encoding/json"
-    "fmt"
     "log"
 
     "skill-eval/tool"
@@ -28,7 +27,8 @@ func NewContext(agent AgentConfig) *RunContext {
 
     // 构建系统消息
     messages := []openai.ChatCompletionMessageParamUnion{
-        openai.UserMessage(agent.SystemPrompt),
+        openai.SystemMessage(agent.SystemPrompt),
+        openai.UserMessage(agent.UserPrompt),
     }
 
     // 构建Tool调用
@@ -78,20 +78,11 @@ func (o Orchestrator) Run() {
     for o.Context.CurrentIteration < maxIterations {
         o.Context.CurrentIteration++
 
-        //userMessage := []openai.ChatCompletionMessageParamUnion{
-        //    openai.UserMessage("你好呀"),
-        //}
-        //for _, m := range o.Context.Messages {
-        //    fmt.Println(m.OfSystem)
-        //}
         p := openai.ChatCompletionNewParams{
             Messages: o.Context.Messages,
             Tools:    o.Context.Tools,
             Model:    "glm-5",
         }
-
-        original, _ := json.Marshal(p)
-        fmt.Println(string(original))
 
         chatCompletion, chatErr := o.ChatProvider.Chat.Completions.New(
             context.Background(),
@@ -109,7 +100,7 @@ func (o Orchestrator) Run() {
         }
 
         // 打印原始输出
-        log.Default().Printf("[INFO] 迭代次数：%s, 对话返回: %v", o.Context.CurrentIteration, chatCompletion.RawJSON())
+        log.Default().Printf("[INFO] 迭代次数：%d, 对话返回: %v \n", o.Context.CurrentIteration, chatCompletion.RawJSON())
 
         choice := chatCompletion.Choices[0]
 

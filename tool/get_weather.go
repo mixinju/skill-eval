@@ -14,12 +14,12 @@ func NewGetWeather() *GetWeather {
 
 // Query 定义查询天气的工具
 func (w *GetWeather) Query(ctx context.Context, params map[string]any) (string, error) {
-    city, ok := params["city"].(string)
+    city, ok := params["location"].(string)
     if !ok {
         return "", fmt.Errorf("param 'city' is required")
     }
 
-    s := fmt.Sprintf(" %s 城市的温度是23-28摄氏度", city)
+    s := fmt.Sprintf(" %s 城市的温度是23-28摄氏度,5-6级阵风", city)
 
     return s, nil
 }

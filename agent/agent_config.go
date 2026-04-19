@@ -6,6 +6,7 @@ type AgentConfig struct {
     Name          string
     Description   string
     SystemPrompt  string
+    UserPrompt    string
     Model         string
     Tools         []tool.Tool
     MaxToolCount  int

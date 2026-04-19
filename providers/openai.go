@@ -13,17 +13,9 @@ import (
     "github.com/openai/openai-go/v3/option"
 )
 
-const (
-    baseUrl = "https://open.bigmodel.cn/api/paas/v4"
-    apiKey  = ""
-)
+func ChatDemo(messages []openai.ChatCompletionMessageParamUnion) {
 
-func Chat(messages []openai.ChatCompletionMessageParamUnion) {
-
-    client := openai.NewClient(
-        option.WithAPIKey(apiKey),
-        option.WithBaseURL(baseUrl),
-    )
+    client := NewClient()
 
     messages = append(messages, openai.UserMessage("今天北京的天气怎么样"))
 
