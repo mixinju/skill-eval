@@ -3,6 +3,7 @@ package tool
 import (
     "bytes"
     "context"
+    "errors"
     "fmt"
     "os/exec"
     "time"
@@ -43,7 +44,7 @@ func (b *Bash) Exec(ctx context.Context, params map[string]any) (string, error) 
         output += "\nSTDERR:\n" + stderr.String()
     }
 
-    if ctx.Err() == context.DeadlineExceeded {
+    if errors.Is(ctx.Err(), context.DeadlineExceeded) {
         return output, fmt.Errorf("command timed out after %s", b.timeout)
     }
 

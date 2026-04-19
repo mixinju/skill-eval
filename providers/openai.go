@@ -61,14 +61,15 @@ func Chat(messages []openai.ChatCompletionMessageParamUnion) {
 
     for _, tc := range assistantMessage.ToolCalls {
         if tc.Function.Name == "get_weather" {
-            var args map[string]string
+            var args map[string]any
             if err := json.Unmarshal([]byte(tc.Function.Arguments), &args); err != nil {
                 log.Printf("解析参数失败")
             }
 
-            location := args["location"]
-
-            r := weather.Query(location)
+            r, e := weather.Query(context.Background(), args)
+            if e != nil {
+                log.Printf("调用天气工具失败:{%s}", e)
+            }
 
             messages = append(messages, openai.ToolMessage(r, tc.ID))
         }

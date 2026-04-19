@@ -8,6 +8,10 @@ import (
 type GetWeather struct {
 }
 
+func NewGetWeather() *GetWeather {
+    return &GetWeather{}
+}
+
 // Query 定义查询天气的工具
 func (w *GetWeather) Query(ctx context.Context, params map[string]any) (string, error) {
     city, ok := params["city"].(string)

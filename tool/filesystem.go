@@ -7,6 +7,8 @@ import (
     "path/filepath"
     "strings"
     "time"
+
+    "github.com/google/uuid"
 )
 
 type FileSystem struct {
@@ -14,6 +16,19 @@ type FileSystem struct {
     deniedPaths  []string
     workspace    string // 工作区路径，用于配置文件更新
     timeout      time.Duration
+}
+
+func NewFileSystem(allowedPaths []string, deniedPaths []string, timeout time.Duration) *FileSystem {
+
+    id, _ := uuid.NewUUID()
+
+    defaultWorkspace := "tmp" + filepath.Join(os.TempDir(), id.String(), "workspace")
+    return &FileSystem{
+        allowedPaths: allowedPaths,
+        deniedPaths:  deniedPaths,
+        timeout:      timeout,
+        workspace:    defaultWorkspace,
+    }
 }
 
 // ReadFile 读取文件
@@ -227,6 +242,90 @@ func (f *FileSystem) ReadConfig(ctx context.Context, params map[string]any) (str
     }
 
     return string(content), nil
+}
+
+// GetTools 返回 FileSystem 暴露的所有工具定义
+func (f *FileSystem) GetTools() []Tool {
+    return []Tool{
+        NewBaseToolInfo("read_file", "读取文件内容", map[string]any{
+            "type": "object",
+            "properties": map[string]any{
+                "path": map[string]any{
+                    "type":        "string",
+                    "description": "要读取的文件路径",
+                },
+            },
+            "required": []string{"path"},
+        }, f.ReadFile),
+        NewBaseToolInfo("write_file", "写入文件内容", map[string]any{
+            "type": "object",
+            "properties": map[string]any{
+                "path": map[string]any{
+                    "type":        "string",
+                    "description": "要写入的文件路径",
+                },
+                "content": map[string]any{
+                    "type":        "string",
+                    "description": "要写入的文件内容",
+                },
+            },
+            "required": []string{"path", "content"},
+        }, f.WriteFile),
+        NewBaseToolInfo("edit_file", "编辑文件（精确字符串替换）", map[string]any{
+            "type": "object",
+            "properties": map[string]any{
+                "path": map[string]any{
+                    "type":        "string",
+                    "description": "要编辑的文件路径",
+                },
+                "old_string": map[string]any{
+                    "type":        "string",
+                    "description": "要被替换的原始字符串",
+                },
+                "new_string": map[string]any{
+                    "type":        "string",
+                    "description": "替换后的新字符串",
+                },
+            },
+            "required": []string{"path", "old_string", "new_string"},
+        }, f.EditFile),
+        NewBaseToolInfo("list_dir", "列出目录内容", map[string]any{
+            "type": "object",
+            "properties": map[string]any{
+                "path": map[string]any{
+                    "type":        "string",
+                    "description": "要列出的目录路径",
+                },
+            },
+            "required": []string{"path"},
+        }, f.ListDir),
+        NewBaseToolInfo("update_config", "更新配置文件（identity/agents/soul/user）", map[string]any{
+            "type": "object",
+            "properties": map[string]any{
+                "file": map[string]any{
+                    "type":        "string",
+                    "enum":        []string{"identity", "agents", "soul", "user"},
+                    "description": "配置文件类型，可选值：identity, agents, soul, user",
+                },
+                "content": map[string]any{
+                    "type":        "string",
+                    "description": "配置文件内容",
+                },
+            },
+            "required": []string{"file", "content"},
+        }, f.UpdateConfig),
+        NewBaseToolInfo("read_config", "读取配置文件（identity/agents/soul/user）", map[string]any{
+            "type": "object",
+            "properties": map[string]any{
+                "file": map[string]any{
+                    "type":        "string",
+                    "enum":        []string{"identity", "agents", "soul", "user"},
+                    "description": "配置文件类型，可选值：identity, agents, soul, user",
+                },
+            },
+            "required": []string{"file"},
+        }, f.ReadConfig),
+    }
 }
 
 // isAllowed 检查路径是否允许访问
