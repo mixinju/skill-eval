@@ -5,6 +5,7 @@ import (
     "encoding/json"
     "fmt"
     "log"
+    "os"
 
     "skill-eval/tool"
 
@@ -32,10 +33,10 @@ func Chat(messages []openai.ChatCompletionMessageParamUnion) {
     weather := tool.GetWeather{}
 
     // 发起调用
+    fmt.Println(messages)
     chatCompletion, err := client.Chat.Completions.New(context.TODO(), openai.ChatCompletionNewParams{
         Messages: messages,
         Model:    "glm-5",
-        Tools:    tools,
     })
 
     if err != nil {
@@ -89,4 +90,13 @@ func Chat(messages []openai.ChatCompletionMessageParamUnion) {
 
     log.Printf("第二次结果 %s", second.RawJSON())
 
+}
+
+func NewClient() openai.Client {
+    client := openai.NewClient(
+        option.WithBaseURL(os.Getenv("EVAL_BASE_URL")),
+        option.WithAPIKey(os.Getenv("EVAL_API_KEY")),
+    )
+
+    return client
 }
