@@ -3,6 +3,7 @@ package tool
 import (
     "bytes"
     "fmt"
+    "log"
     "os"
     "path/filepath"
 
@@ -20,6 +21,21 @@ type Skill struct {
     FilePath  string            `yaml:"-" json:"filePath"`            // SKILL.md 的绝对路径
     BaseDir   string            `yaml:"-" json:"baseDir"`             // 技能所在目录的绝对路径
     Resources map[string]string `yaml:"-" json:"resources,omitempty"` // 资源文件: 文件名 -> 绝对路径
+}
+
+// NewSkill 从目录技能文件夹中加载 Skill
+// filepath 指定了SKILL.md的文件路径
+func NewSkill(filePath string) Skill {
+    s := Skill{
+        FilePath: filePath,
+    }
+
+    err := s.Load()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    return s
 }
 
 // Load 从指定的路径加载技能，将内容赋值给s
@@ -131,4 +147,46 @@ func parseFrontMatter(data []byte) (frontMatter []byte, content []byte, err erro
     frontMatter = data[3 : endIdx+3]
     content = bytes.TrimSpace(data[endIdx+6:])
     return frontMatter, content, nil
+}
+
+// Prompt 返回拼接后的 SKILL 格式字符串
+// 格式示例:
+//
+//	<skill name="weather">
+//	**Name:** weather
+//	**Description:** Get weather information for any location
+//	**Missing Dependencies:**
+//	 - Binary dependencies: [curl jq]
+//	</skill>
+func (s *Skill) Prompt(loadContent bool) string {
+    var buf bytes.Buffer
+
+    buf.WriteString(fmt.Sprintf("\n<skill name=\"%s\">\n", s.Name))
+    buf.WriteString(fmt.Sprintf("**Description:** %s\n", s.Description))
+
+    // 暂时先不用传递版本信息
+    //if s.Version != "" {
+    //	buf.WriteString(fmt.Sprintf("**Version:** %s\n", s.Version))
+    //}
+
+    if loadContent {
+        buf.WriteString(fmt.Sprintf("**Content:** %s\n", s.Content))
+    }
+
+    //if len(s.Resources) > 0 {
+    //    buf.WriteString("**Missing Dependencies:**\n")
+    //    buf.WriteString(" - Binary dependencies: [")
+    //    i := 0
+    //    for name := range s.Resources {
+    //        if i > 0 {
+    //            buf.WriteString(" ")
+    //        }
+    //        buf.WriteString(name)
+    //        i++
+    //    }
+    //    buf.WriteString("]")
+    //}
+
+    buf.WriteString("</skill>\n")
+    return buf.String()
 }

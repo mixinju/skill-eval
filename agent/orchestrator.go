@@ -4,6 +4,7 @@ import (
     "context"
     "encoding/json"
     "log"
+    "strings"
 
     "skill-eval/tool"
 
@@ -54,12 +55,13 @@ func NewContext(agent AgentConfig) *RunContext {
 }
 
 type RunContext struct {
-    Agent            AgentConfig
-    Messages         []openai.ChatCompletionMessageParamUnion
-    Tools            []openai.ChatCompletionToolUnionParam
-    ToolsCollections map[string]tool.Tool
-    CurrentIteration int
-    TargetSkill      tool.Skill
+    Agent             AgentConfig
+    Messages          []openai.ChatCompletionMessageParamUnion
+    Tools             []openai.ChatCompletionToolUnionParam
+    HasSelectedSkills map[string]tool.Skill
+    ToolsCollections  map[string]tool.Tool
+    CurrentIteration  int
+    TargetSkill       tool.Skill
 
     UsedToken int64
 }
@@ -71,10 +73,30 @@ type ToolCallRecord struct {
     Error  string
 }
 
+// 构建系统提示词
+// loaded 表示需要被加载的技能的名称
+func (rc *RunContext) buildSystemPrompt(loaded string) string {
+    var sb strings.Builder
+    a := rc.Agent
+
+    // 保留已有的 SystemPrompt
+    sb.WriteString(a.SystemPrompt)
+    for _, s := range a.Skills {
+        // 是否加载skill的content
+        sb.WriteString(s.Prompt(loaded == s.Name))
+    }
+
+    rc.Messages[0] = openai.SystemMessage(sb.String())
+    return sb.String()
+}
+
 func (o Orchestrator) Run() {
 
     maxIterations := o.Context.Agent.MaxIterations
     // 最入最大循环
+
+    // 初始化-不加载任何一个完整的skill
+    o.Context.buildSystemPrompt("")
     for o.Context.CurrentIteration < maxIterations {
         o.Context.CurrentIteration++
 
@@ -110,6 +132,7 @@ func (o Orchestrator) Run() {
         // 更新历史消息
         o.Context.Messages = append(o.Context.Messages, choice.Message.ToParam())
 
+        // 工具调用
         for _, tc := range choice.Message.ToolCalls {
 
             name := tc.Function.Name
@@ -123,17 +146,25 @@ func (o Orchestrator) Run() {
             if name == o.Context.TargetSkill.Name {
                 log.Printf("[Info] 命中目标SKILL")
             }
-            toolExec, ok := o.Context.ToolsCollections[name]
-            if !ok {
-                log.Printf("[ERROR]: 大模型返回的工具不存在: %s", name)
-                o.Context.Messages = append(o.Context.Messages, openai.ToolMessage("tool not found: "+name, tc.ID))
-                continue
-            }
 
             var params map[string]any
 
             if err := json.Unmarshal([]byte(tc.Function.Arguments), &params); err != nil {
                 log.Printf("ERROR:  反序列化参数失败%v,原始信息:%s", err, tc.Function.RawJSON())
+                continue
+            }
+
+            // 技能调用
+            if name == "use_skill" {
+                //
+                o.Context.buildSystemPrompt(params["name"].(string))
+                o.Context.Messages = append(o.Context.Messages, openai.UserMessage("SKILL.md已加载"))
+                continue
+            }
+            toolExec, ok := o.Context.ToolsCollections[name]
+            if !ok {
+                log.Printf("[ERROR]: 大模型返回的工具不存在: %s", name)
+                o.Context.Messages = append(o.Context.Messages, openai.ToolMessage("tool not found: "+name, tc.ID))
                 continue
             }
 

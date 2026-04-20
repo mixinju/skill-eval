@@ -1,6 +1,8 @@
 package agent
 
-import "skill-eval/tool"
+import (
+    "skill-eval/tool"
+)
 
 type AgentConfig struct {
     Name          string
@@ -9,13 +11,14 @@ type AgentConfig struct {
     UserPrompt    string
     Model         string
     Tools         []tool.Tool
+    Skills        []tool.Skill
     MaxToolCount  int
     MaxIterations int
 }
 
-type AgentConfigOpt func(*AgentConfig)
+type ConfigOpt func(*AgentConfig)
 
-func NewAgentConfig(opts ...AgentConfigOpt) *AgentConfig {
+func NewAgentConfig(opts ...ConfigOpt) *AgentConfig {
 
     a := &AgentConfig{}
     for _, opt := range opts {
@@ -24,43 +27,43 @@ func NewAgentConfig(opts ...AgentConfigOpt) *AgentConfig {
     return a
 }
 
-func WithName(name string) AgentConfigOpt {
+func WithName(name string) ConfigOpt {
     return func(c *AgentConfig) {
         c.Name = name
     }
 }
 
-func WithDescription(description string) AgentConfigOpt {
+func WithDescription(description string) ConfigOpt {
     return func(c *AgentConfig) {
         c.Description = description
     }
 }
 
-func WithSystemPrompt(prompt string) AgentConfigOpt {
+func WithSystemPrompt(prompt string) ConfigOpt {
     return func(c *AgentConfig) {
         c.SystemPrompt = prompt
     }
 }
 
-func WithModel(model string) AgentConfigOpt {
+func WithModel(model string) ConfigOpt {
     return func(c *AgentConfig) {
         c.Model = model
     }
 }
 
-func WithTools(tools ...tool.Tool) AgentConfigOpt {
+func WithTools(tools ...tool.Tool) ConfigOpt {
     return func(c *AgentConfig) {
         c.Tools = append(c.Tools, tools...)
     }
 }
 
-func WithMaxToolCount(max int) AgentConfigOpt {
+func WithMaxToolCount(max int) ConfigOpt {
     return func(c *AgentConfig) {
         c.MaxToolCount = max
     }
 }
 
-func WithMaxIterations(max int) AgentConfigOpt {
+func WithMaxIterations(max int) ConfigOpt {
     return func(c *AgentConfig) {
         c.MaxIterations = max
     }
@@ -79,7 +82,7 @@ func (a *AgentConfig) RegistryDefaultTools() {
 
     var tools []tool.Tool
 
-    fs := tool.NewFileSystem(nil, nil, 4)
+    fs := tool.NewFileSystem([]string{"./workplace"}, nil, 4)
     tools = append(tools, fs.GetTools()...)
 
     bash := tool.NewBash("./workplace", 5)
@@ -92,4 +95,18 @@ func (a *AgentConfig) RegistryDefaultTools() {
     tools = append(tools, weather.GetTools()...)
 
     a.Tools = tools
+}
+
+// RegistrySkill 加载SKILL
+func (a *AgentConfig) RegistrySkill() {
+
+    pdf := tool.NewSkill("")
+    a.Skills = append(a.Skills, pdf)
+
+    xlsx := tool.NewSkill("")
+    a.Skills = append(a.Skills, xlsx)
+
+    ppt := tool.NewSkill("")
+    a.Skills = append(a.Skills, ppt)
+
 }
