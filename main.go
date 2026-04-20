@@ -21,6 +21,7 @@ func main() {
 
     // 注册默认工具
     agentConfig.RegistryDefaultTools()
+    agentConfig.RegistrySkills()
 
     // 新建调度器
     o := agent.NewOrchestrator(&client, agentConfig)
