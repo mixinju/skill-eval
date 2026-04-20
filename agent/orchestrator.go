@@ -158,7 +158,7 @@ func (o Orchestrator) Run() {
             if name == "use_skill" {
                 //
                 o.Context.buildSystemPrompt(params["name"].(string))
-                o.Context.Messages = append(o.Context.Messages, openai.UserMessage("SKILL.md已加载"))
+                o.Context.Messages = append(o.Context.Messages, openai.ToolMessage("SKILL.md已加载", tc.ID))
                 continue
             }
             toolExec, ok := o.Context.ToolsCollections[name]
@@ -171,11 +171,11 @@ func (o Orchestrator) Run() {
             toolOutPut, toolCallErr := toolExec.Exec(context.Background(), params)
             if toolCallErr != nil {
                 log.Printf("ERROR，调用工具失败；%s", toolCallErr)
+                o.Context.Messages = append(o.Context.Messages, openai.ToolMessage("工具调用失败: "+name+toolCallErr.Error(), tc.ID))
             }
 
             // 构建工具执行结果信息
             o.Context.Messages = append(o.Context.Messages, openai.ToolMessage(toolOutPut, tc.ID))
-
         }
     }
 }
