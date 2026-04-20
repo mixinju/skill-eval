@@ -16,6 +16,13 @@ type Orchestrator struct {
     Context      *RunContext
 }
 
+func (o Orchestrator) SetTargetSkill(name string) {
+    if o.Context == nil {
+        return
+    }
+    o.Context.TargetSkill = name
+}
+
 func NewOrchestrator(chatProvider *openai.Client, agent AgentConfig) *Orchestrator {
 
     return &Orchestrator{
@@ -61,7 +68,7 @@ type RunContext struct {
     HasSelectedSkills map[string]tool.Skill
     ToolsCollections  map[string]tool.Tool
     CurrentIteration  int
-    TargetSkill       tool.Skill
+    TargetSkill       string //目标skill名称
 
     UsedToken int64
 }
@@ -143,7 +150,7 @@ func (o Orchestrator) Run() {
                 return
             }
             // 命中目标SKILL
-            if name == o.Context.TargetSkill.Name {
+            if name == o.Context.TargetSkill {
                 log.Printf("[Info] 命中目标SKILL")
             }
 
@@ -172,6 +179,7 @@ func (o Orchestrator) Run() {
             if toolCallErr != nil {
                 log.Printf("ERROR，调用工具失败；%s", toolCallErr)
                 o.Context.Messages = append(o.Context.Messages, openai.ToolMessage("工具调用失败: "+name+toolCallErr.Error(), tc.ID))
+                continue
             }
 
             // 构建工具执行结果信息
