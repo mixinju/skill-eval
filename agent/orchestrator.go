@@ -173,6 +173,9 @@ func (o *Orchestrator) Run() {
 			Messages: o.Context.Messages,
 			Tools:    o.Context.Tools,
 			Model:    o.Context.Agent.Model,
+			// 设置最大输出token，防止响应被截断
+			// 对于包含大量内容的工具调用（如写入文件），需要足够的空间
+			MaxTokens: openai.Int(16384),
 		}
 
 		chatCompletion, chatErr := o.ChatProvider.Chat.Completions.New(
