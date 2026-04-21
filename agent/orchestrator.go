@@ -173,10 +173,11 @@ func (o *Orchestrator) Run() {
 	maxIterations := o.Context.Agent.MaxIterations
 
 	o.emit(TraceEvent{
-		Type:       EventRunStart,
-		AgentName:  o.Context.Agent.Name,
-		Model:      o.Context.Agent.Model,
-		UserPrompt: o.Context.Agent.UserPrompt,
+		Type:        EventRunStart,
+		AgentName:   o.Context.Agent.Name,
+		Model:       o.Context.Agent.Model,
+		UserPrompt:  o.Context.Agent.UserPrompt,
+		TargetSkill: o.Context.TargetSkill,
 	})
 
 	success := false
@@ -281,6 +282,12 @@ func (o *Orchestrator) Run() {
 				continue
 			}
 
+			// 判断是否命中目标SKILL
+			isTarget := name == o.Context.TargetSkill
+			if isTarget {
+				logrus.Info("命中目标SKILL")
+			}
+
 			// 调用结束
 			if name == "finish" {
 				logrus.Info("调用结束")
@@ -296,15 +303,10 @@ func (o *Orchestrator) Run() {
 				success = true
 				return
 			}
-			// 命中目标SKILL
-			if name == o.Context.TargetSkill {
-				logrus.Info("命中目标SKILL")
-				o.emit(TraceEvent{Type: EventTargetSkillHit, Iteration: o.Context.CurrentIteration, ToolName: name})
-			}
 
 			// 技能调用
 			if name == "use_skill" {
-				o.emit(TraceEvent{Type: EventToolStart, Iteration: o.Context.CurrentIteration, CallID: tc.ID, ToolName: name, ToolInput: tc.Function.Arguments})
+				o.emit(TraceEvent{Type: EventSkillStart, Iteration: o.Context.CurrentIteration, CallID: tc.ID, ToolName: name, ToolInput: tc.Function.Arguments, IsTarget: isTarget})
 				skillName, ok := params["name"].(string)
 				if !ok || skillName == "" {
 					logrus.Error("use_skill 参数 name 无效或不存在")
@@ -315,7 +317,7 @@ func (o *Orchestrator) Run() {
 				}
 
 				o.Context.buildSystemPrompt(skillName)
-				o.emit(TraceEvent{Type: EventToolEnd, CallID: tc.ID, ToolOutput: "SKILL.md已加载: " + skillName})
+				o.emit(TraceEvent{Type: EventSkillEnd, CallID: tc.ID, ToolOutput: "SKILL.md已加载: " + skillName})
 				o.Context.Messages = append(o.Context.Messages, openai.ToolMessage("SKILL.md已加载", tc.ID))
 				continue
 			}
@@ -326,9 +328,10 @@ func (o *Orchestrator) Run() {
 				continue
 			}
 
+			//开始工具调用
 			o.emit(TraceEvent{Type: EventToolStart, Iteration: o.Context.CurrentIteration, CallID: tc.ID, ToolName: name, ToolInput: tc.Function.Arguments})
-
 			toolOutPut, toolCallErr := toolExec.Exec(context.Background(), params)
+
 			if toolCallErr != nil {
 				logrus.Errorf("调用工具失败；%s", toolCallErr)
 				o.emit(TraceEvent{Type: EventToolEnd, CallID: tc.ID, Error: toolCallErr.Error()})

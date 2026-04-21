@@ -13,7 +13,8 @@ const (
 	EventLLMCompressEnd   EventType = "llm_compress_end"
 	EventToolStart        EventType = "tool_start"
 	EventToolEnd          EventType = "tool_end"
-	EventTargetSkillHit   EventType = "target_skill_hit"
+	EventSkillStart       EventType = "skill_start"
+	EventSkillEnd         EventType = "skill_end"
 )
 
 type TraceEvent struct {
@@ -39,6 +40,10 @@ type TraceEvent struct {
 	ToolName   string `json:"toolName,omitempty"`
 	ToolInput  string `json:"toolInput,omitempty"`
 	ToolOutput string `json:"toolOutput,omitempty"`
+
+	// SKILL专属
+	IsTarget    bool   `json:"isTarget,omitempty"`
+	TargetSkill string `json:"targetSkill,omitempty"`
 
 	Error string `json:"error,omitempty"`
 }
@@ -69,24 +74,23 @@ type Span struct {
 
 	ToolInput  string `json:"toolInput,omitempty"`
 	ToolOutput string `json:"toolOutput,omitempty"`
+	IsTarget   bool   `json:"isTarget,omitempty"`
 
 	Error string `json:"error,omitempty"`
 }
 
 type Trace struct {
-	ID                string    `json:"id"`
-	AgentName         string    `json:"agentName"`
-	Model             string    `json:"model"`
-	UserPrompt        string    `json:"userPrompt"`
-	StartTime         time.Time `json:"startTime"`
-	EndTime           time.Time `json:"endTime,omitempty"`
-	TotalTokens       int64     `json:"totalTokens"`
-	Iterations        int       `json:"iterations"`
-	Success           bool      `json:"success"`
-	TargetSkillHit    bool      `json:"targetSkillHit"`
-	TargetSkillName   string    `json:"targetSkillName,omitempty"`
-	TargetSkillHitAt  int       `json:"targetSkillHitAt,omitempty"`
-	Spans             []*Span   `json:"spans"`
+	ID          string    `json:"id"`
+	AgentName   string    `json:"agentName"`
+	Model       string    `json:"model"`
+	UserPrompt  string    `json:"userPrompt"`
+	TargetSkill string    `json:"targetSkill,omitempty"`
+	StartTime   time.Time `json:"startTime"`
+	EndTime     time.Time `json:"endTime,omitempty"`
+	TotalTokens int64     `json:"totalTokens"`
+	Iterations  int       `json:"iterations"`
+	Success     bool      `json:"success"`
+	Spans       []*Span   `json:"spans"`
 }
 
 type TracerHook interface {

@@ -37,11 +37,12 @@ func (t *DefaultTracer) OnEvent(event TraceEvent) {
 	switch event.Type {
 	case EventRunStart:
 		t.trace = &Trace{
-			ID:         t.Id(),
-			AgentName:  event.AgentName,
-			Model:      event.Model,
-			UserPrompt: event.UserPrompt,
-			StartTime:  event.Timestamp,
+			ID:          t.Id(),
+			AgentName:   event.AgentName,
+			Model:       event.Model,
+			UserPrompt:  event.UserPrompt,
+			TargetSkill: event.TargetSkill,
+			StartTime:   event.Timestamp,
 		}
 		logrus.Infof("[Tracer] Run 开始: %s", t.trace.ID)
 
@@ -116,6 +117,7 @@ func (t *DefaultTracer) OnEvent(event TraceEvent) {
 			Iteration: event.Iteration,
 			StartTime: event.Timestamp,
 			ToolInput: event.ToolInput,
+			IsTarget:  event.IsTarget,
 		}
 		t.toolSpans[event.CallID] = span
 		t.trace.Spans = append(t.trace.Spans, span)
