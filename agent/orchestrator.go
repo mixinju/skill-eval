@@ -143,17 +143,6 @@ func (o *Orchestrator) Run() {
 		for _, tc := range choice.Message.ToolCalls {
 
 			name := tc.Function.Name
-
-			// 调用结束
-			if name == "finish" {
-				log.Printf("调用结束")
-				return
-			}
-			// 命中目标SKILL
-			if name == o.Context.TargetSkill {
-				log.Printf("[Info] 命中目标SKILL")
-			}
-
 			var params map[string]any
 
 			if err := json.Unmarshal([]byte(tc.Function.Arguments), &params); err != nil {
@@ -161,10 +150,33 @@ func (o *Orchestrator) Run() {
 				continue
 			}
 
+			// 调用结束
+			if name == "finish" {
+				log.Printf("调用结束")
+				finishTool := o.Context.ToolsCollections["finish"]
+				finishResult, finishError := finishTool.Exec(context.Background(), params)
+				if finishError != nil {
+					return
+				}
+				o.Context.Messages = append(o.Context.Messages, openai.ToolMessage(finishResult, tc.ID))
+				return
+			}
+			// 命中目标SKILL
+			if name == o.Context.TargetSkill {
+				log.Printf("[Info] 命中目标SKILL")
+			}
+
 			// 技能调用
 			if name == "use_skill" {
-				// TODO 检测到要加载SKILL就重新拼接SystemPrompt
-				o.Context.buildSystemPrompt(params["name"].(string))
+				skillName, ok := params["name"].(string)
+				if !ok || skillName == "" {
+					log.Printf("[ERROR] use_skill 参数 name 无效或不存在")
+					o.Context.Messages = append(o.Context.Messages,
+						openai.ToolMessage("参数错误: name 字段必须是字符串且不能为空", tc.ID))
+					continue
+				}
+
+				o.Context.buildSystemPrompt(skillName)
 				o.Context.Messages = append(o.Context.Messages, openai.ToolMessage("SKILL.md已加载", tc.ID))
 				continue
 			}

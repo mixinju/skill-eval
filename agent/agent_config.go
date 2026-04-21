@@ -95,10 +95,14 @@ func (a *AgentConfig) RegistryDefaultTools() {
 	weather := tool.NewGetWeather()
 	tools = append(tools, weather.GetTools()...)
 
+	useSkill := tool.NewUseSkill()
+	tools = append(tools, useSkill.GetTools()...)
+
 	a.Tools = tools
 }
 
 // RegistrySkills 加载SKILL
+// TODO 默认从AutoMan的目录下加载
 func (a *AgentConfig) RegistrySkills() {
 
 	paths := []string{"", "", ""}

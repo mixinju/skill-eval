@@ -6,24 +6,37 @@ type UseSkill struct {
 }
 
 type useSkillResult struct {
-    Success bool
-    Name    string
-    Content string
-    Message string
+	Success bool
+	Name    string
+	Content string
+	Message string
+}
+
+func NewUseSkill() *UseSkill {
+	return &UseSkill{}
 }
 
 func (*UseSkill) Params() map[string]any {
-    return map[string]any{}
+	return map[string]any{
+		"type": "object",
+		"properties": map[string]any{
+			"name": map[string]any{
+				"type":        "string",
+				"description": "要加载的 SKILL 名称",
+			},
+		},
+		"required": []string{"name"},
+	}
 }
 
 func (u *UseSkill) Exec(ctx context.Context, params map[string]any) (string, error) {
-    return "", nil
+	return "", nil
 }
 
 func (u *UseSkill) GetTools() []Tool {
-    tools := []Tool{
-        NewBaseToolInfo("use_skill", "选择使用一个SKILL，并加载SKILL具体的内容", u.Params(), u.Exec),
-    }
+	tools := []Tool{
+		NewBaseToolInfo("use_skill", "选择使用一个SKILL，并加载SKILL具体的内容", u.Params(), u.Exec),
+	}
 
-    return tools
+	return tools
 }
