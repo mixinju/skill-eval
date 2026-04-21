@@ -85,10 +85,10 @@ func (a *AgentConfig) RegistryDefaultTools() {
 
 	var tools []tool.Tool
 
-	fs := tool.NewFileSystem([]string{"./workplace"}, nil, 4)
+	fs := tool.NewFileSystem([]string{}, nil, 4)
 	tools = append(tools, fs.GetTools()...)
 
-	bash := tool.NewBash("./workplace", 5)
+	bash := tool.NewBash("", 5)
 	tools = append(tools, bash.GetTools()...)
 
 	finish := tool.NewFinish()
