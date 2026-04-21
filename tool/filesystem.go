@@ -23,7 +23,7 @@ func NewFileSystem(allowedPaths []string, deniedPaths []string, timeout time.Dur
 	id, _ := uuid.NewUUID()
 	now := time.Now()
 
-	defaultWorkspace := filepath.Join("~/Desktop/skil-eval-workplace/", now.Format("20060102")+id.String())
+	defaultWorkspace := filepath.Join("/Users/mixinju/Desktop/skill-eval-workplace/", now.Format("20060102")+"--"+id.String())
 	return &FileSystem{
 		allowedPaths: allowedPaths,
 		deniedPaths:  deniedPaths,

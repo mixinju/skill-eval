@@ -107,18 +107,29 @@ func (a *AgentConfig) RegistryDefaultTools() {
 // 默认从.claude/skills目录下加载所有的目录
 func (a *AgentConfig) RegistrySkills() {
 
-	claudeSkillDir := "~/.claude/skills"
+	claudeSkillDir := "/Users/mixinju/.claude/skills"
 
 	entries, err := os.ReadDir(claudeSkillDir)
 	if err != nil {
-		log.Printf("[WARN] 加载Claude 技能文件夹失败")
+		log.Printf("[WARN] 加载Claude 技能文件夹失败,%s", err.Error())
+		return
 	}
 
 	for _, entry := range entries {
 		if !entry.IsDir() {
 			continue
 		}
-		s, err := tool.NewSkill(filepath.Join(claudeSkillDir, entry.Name()))
+
+		// 构建技能根目录下的 SKILL.md 文件路径
+		skillFilePath := filepath.Join(claudeSkillDir, entry.Name(), "SKILL.md")
+
+		// 检查 SKILL.md 文件是否存在
+		if _, err := os.Stat(skillFilePath); os.IsNotExist(err) {
+			log.Printf("[WARN] 技能目录 %s 下不存在 SKILL.md 文件", entry.Name())
+			continue
+		}
+
+		s, err := tool.NewSkill(skillFilePath)
 		if err != nil {
 			log.Printf("[WARN] 加载SKILL失败: %v", err)
 			continue
