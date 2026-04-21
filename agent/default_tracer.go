@@ -76,7 +76,7 @@ func (t *DefaultTracer) OnEvent(event TraceEvent) {
 			return
 		}
 		t.currentLLM.EndTime = event.Timestamp
-		t.currentLLM.Duration = event.Timestamp.Sub(t.currentLLM.StartTime)
+		t.currentLLM.Duration = event.Timestamp.Sub(t.currentLLM.StartTime).Milliseconds()
 		t.currentLLM.TotalTokens = event.TotalTokens
 		t.currentLLM.FinishReason = event.FinishReason
 		t.currentLLM.LLMOutput = event.LLMOutput
@@ -99,7 +99,7 @@ func (t *DefaultTracer) OnEvent(event TraceEvent) {
 			return
 		}
 		t.currentLLM.EndTime = event.Timestamp
-		t.currentLLM.Duration = event.Timestamp.Sub(t.currentLLM.StartTime)
+		t.currentLLM.Duration = event.Timestamp.Sub(t.currentLLM.StartTime).Milliseconds()
 		t.currentLLM.TotalTokens = event.TotalTokens
 		t.currentLLM.Error = event.Error
 		t.currentLLM = nil
@@ -128,7 +128,7 @@ func (t *DefaultTracer) OnEvent(event TraceEvent) {
 			return
 		}
 		span.EndTime = event.Timestamp
-		span.Duration = event.Timestamp.Sub(span.StartTime)
+		span.Duration = event.Timestamp.Sub(span.StartTime).Milliseconds()
 		span.ToolOutput = event.ToolOutput
 		span.Error = event.Error
 		delete(t.toolSpans, event.CallID)

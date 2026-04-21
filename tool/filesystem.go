@@ -86,7 +86,7 @@ func (f *FileSystem) WriteFile(ctx context.Context, params map[string]any) (stri
 	}
 
 	logrus.Infof("文件保存成功:%s", path)
-	return fmt.Sprintf("Successfully wrote %d bytes to %s", len(content), path), nil
+	return fmt.Sprintf("Successfully wrote %d bytes to %s", len(content), localPath), nil
 }
 
 // EditFile 编辑文件（精确字符串替换）
@@ -136,7 +136,8 @@ func (f *FileSystem) EditFile(ctx context.Context, params map[string]any) (strin
 		return "", fmt.Errorf("failed to write file: %w", err)
 	}
 
-	return fmt.Sprintf("Successfully replaced %d occurrence(s) in %s", occurrences, path), nil
+	// 写入文件返回实际地址
+	return fmt.Sprintf("Successfully replaced %d occurrence(s) in %s", occurrences, localPath), nil
 }
 
 // ListDir 列出目录

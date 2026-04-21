@@ -57,14 +57,14 @@ const (
 )
 
 type Span struct {
-	SpanID    string        `json:"spanId"`
-	ParentID  string        `json:"parentId,omitempty"`
-	Kind      SpanKind      `json:"kind"`
-	Name      string        `json:"name"`
-	Iteration int           `json:"iteration"`
-	StartTime time.Time     `json:"startTime"`
-	EndTime   time.Time     `json:"endTime,omitempty"`
-	Duration  time.Duration `json:"duration,omitempty"`
+	SpanID    string    `json:"spanId"`
+	ParentID  string    `json:"parentId,omitempty"`
+	Kind      SpanKind  `json:"kind"`
+	Name      string    `json:"name"`
+	Iteration int       `json:"iteration"`
+	StartTime time.Time `json:"startTime"`
+	EndTime   time.Time `json:"endTime,omitempty"`
+	Duration  int64     `json:"duration,omitempty"`
 
 	InputMessages int    `json:"inputMessages,omitempty"`
 	TotalTokens   int64  `json:"totalTokens,omitempty"`

@@ -238,6 +238,7 @@ func (o *Orchestrator) Run() {
 		}
 
 		choice := chatCompletion.Choices[0]
+		logrus.Infof("大模型的返回:%s", choice.RawJSON())
 
 		o.emit(TraceEvent{
 			Type:         EventLLMEnd,
