@@ -39,8 +39,8 @@ func main() {
 
 func init() {
 	logrus.SetFormatter(&logrus.TextFormatter{
-		ForceColors:    true,
-		FullTimestamp:  true,
+		ForceColors:     true,
+		FullTimestamp:   true,
 		TimestampFormat: "2006-01-02 15:04:05",
 		CallerPrettyfier: func(f *runtime.Frame) (string, string) {
 			return "", fmt.Sprintf(" %s:%d", filepath.Base(f.File), f.Line)
