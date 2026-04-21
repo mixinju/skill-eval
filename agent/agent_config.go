@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"log"
 	"skill-eval/tool"
 )
 
@@ -100,12 +101,13 @@ func (a *AgentConfig) RegistryDefaultTools() {
 // RegistrySkills 加载SKILL
 func (a *AgentConfig) RegistrySkills() {
 
-	pdf := tool.NewSkill("")
-	a.Skills = append(a.Skills, pdf)
-
-	xlsx := tool.NewSkill("")
-	a.Skills = append(a.Skills, xlsx)
-
-	ppt := tool.NewSkill("")
-	a.Skills = append(a.Skills, ppt)
+	paths := []string{"", "", ""}
+	for _, p := range paths {
+		s, err := tool.NewSkill(p)
+		if err != nil {
+			log.Printf("[WARN] 加载SKILL失败: %v", err)
+			continue
+		}
+		a.Skills = append(a.Skills, s)
+	}
 }

@@ -3,7 +3,6 @@ package tool
 import (
     "bytes"
     "fmt"
-    "log"
     "os"
     "path/filepath"
 
@@ -25,17 +24,17 @@ type Skill struct {
 
 // NewSkill 从目录技能文件夹中加载 Skill
 // filepath 指定了SKILL.md的文件路径
-func NewSkill(filePath string) Skill {
+func NewSkill(filePath string) (Skill, error) {
     s := Skill{
         FilePath: filePath,
     }
 
     err := s.Load()
     if err != nil {
-        log.Fatal(err)
+        return s, err
     }
 
-    return s
+    return s, nil
 }
 
 // Load 从指定的路径加载技能，将内容赋值给s

@@ -16,7 +16,7 @@ type Orchestrator struct {
 	Context      *RunContext
 }
 
-func (o Orchestrator) SetTargetSkill(name string) {
+func (o *Orchestrator) SetTargetSkill(name string) {
 	if o.Context == nil {
 		return
 	}
@@ -97,7 +97,7 @@ func (rc *RunContext) buildSystemPrompt(loaded string) string {
 	return sb.String()
 }
 
-func (o Orchestrator) Run() {
+func (o *Orchestrator) Run() {
 
 	maxIterations := o.Context.Agent.MaxIterations
 	// 最入最大循环
