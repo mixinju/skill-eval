@@ -101,7 +101,7 @@ func (rc *RunContext) buildSystemPrompt(loaded string) string {
 	return sb.String()
 }
 
-func (o *Orchestrator) compressMessages() error {
+func (o *Orchestrator) compress() error {
 	messages := o.Context.Messages
 	threshold := o.Context.CompressThreshold
 	if threshold <= 0 || len(messages) <= threshold {
@@ -165,7 +165,7 @@ func (o *Orchestrator) Run() {
 		o.Context.CurrentIteration++
 
 		// 压缩对话消息
-		if err := o.compressMessages(); err != nil {
+		if err := o.compress(); err != nil {
 			logrus.Warnf("消息压缩失败: %v", err)
 		}
 
