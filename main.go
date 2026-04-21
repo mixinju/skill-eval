@@ -1,6 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"path/filepath"
+	"runtime"
+
 	"skill-eval/agent"
 	"skill-eval/providers"
 
@@ -8,13 +12,6 @@ import (
 )
 
 func main() {
-
-	logrus.SetFormatter(&logrus.TextFormatter{
-		ForceColors:    true,
-		FullTimestamp:   true,
-		TimestampFormat: "2006-01-02 15:04:05",
-	})
-	logrus.SetLevel(logrus.DebugLevel)
 
 	client := providers.NewClient()
 
@@ -38,4 +35,17 @@ func main() {
 
 	//运行智能体
 	o.Run()
+}
+
+func init() {
+	logrus.SetFormatter(&logrus.TextFormatter{
+		ForceColors:    true,
+		FullTimestamp:  true,
+		TimestampFormat: "2006-01-02 15:04:05",
+		CallerPrettyfier: func(f *runtime.Frame) (string, string) {
+			return "", fmt.Sprintf(" %s:%d", filepath.Base(f.File), f.Line)
+		},
+	})
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetReportCaller(true)
 }
