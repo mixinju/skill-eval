@@ -4,13 +4,13 @@ import (
     "context"
     "encoding/json"
     "fmt"
-    "log"
     "os"
 
     "skill-eval/tool"
 
     "github.com/openai/openai-go/v3"
     "github.com/openai/openai-go/v3/option"
+    "github.com/sirupsen/logrus"
 )
 
 func ChatDemo(messages []openai.ChatCompletionMessageParamUnion) {
@@ -32,21 +32,21 @@ func ChatDemo(messages []openai.ChatCompletionMessageParamUnion) {
     })
 
     if err != nil {
-        log.Printf("调用客户端失败:{%s}", err)
+        logrus.Errorf("调用客户端失败:{%s}", err)
     }
 
     if len(chatCompletion.Choices) == 0 {
-        log.Printf("返回内容为空")
+        logrus.Warn("返回内容为空")
     }
 
     //fmt.Println(chatCompletion.RawJSON())
 
     assistantMessage := chatCompletion.Choices[0].Message
 
-    log.Printf("第一次调用结果:%s", assistantMessage.RawJSON())
+    logrus.Infof("第一次调用结果:%s", assistantMessage.RawJSON())
 
     if len(assistantMessage.ToolCalls) <= 0 {
-        log.Printf("工具调用失败")
+        logrus.Warn("工具调用失败")
     }
 
     // 维护历史消息
@@ -56,12 +56,12 @@ func ChatDemo(messages []openai.ChatCompletionMessageParamUnion) {
         if tc.Function.Name == "get_weather" {
             var args map[string]any
             if err := json.Unmarshal([]byte(tc.Function.Arguments), &args); err != nil {
-                log.Printf("解析参数失败")
+                logrus.Error("解析参数失败")
             }
 
             r, e := weather.Query(context.Background(), args)
             if e != nil {
-                log.Printf("调用天气工具失败:{%s}", e)
+                logrus.Errorf("调用天气工具失败:{%s}", e)
             }
 
             messages = append(messages, openai.ToolMessage(r, tc.ID))
@@ -74,13 +74,13 @@ func ChatDemo(messages []openai.ChatCompletionMessageParamUnion) {
         Model:    "glm-5",
     })
     if err != nil {
-        log.Fatalf("第二次调用失败")
+        logrus.Fatal("第二次调用失败")
 
     }
 
     fmt.Println("=====第二次调用结果=====")
 
-    log.Printf("第二次结果 %s", second.RawJSON())
+    logrus.Infof("第二次结果 %s", second.RawJSON())
 
 }
 

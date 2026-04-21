@@ -1,11 +1,12 @@
 package agent
 
 import (
-	"log"
 	"os"
 	"path/filepath"
 	"skill-eval/tool"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 type AgentConfig struct {
@@ -112,7 +113,7 @@ func (a *AgentConfig) RegistrySkills() {
 
 	entries, err := os.ReadDir(claudeSkillDir)
 	if err != nil {
-		log.Printf("[WARN] 加载Claude 技能文件夹失败,%s", err.Error())
+		logrus.Warnf("加载Claude 技能文件夹失败,%s", err.Error())
 		return
 	}
 
@@ -126,13 +127,13 @@ func (a *AgentConfig) RegistrySkills() {
 
 		// 检查 SKILL.md 文件是否存在
 		if _, err := os.Stat(skillFilePath); os.IsNotExist(err) {
-			log.Printf("[WARN] 技能目录 %s 下不存在 SKILL.md 文件", entry.Name())
+			logrus.Warnf("技能目录 %s 下不存在 SKILL.md 文件", entry.Name())
 			continue
 		}
 
 		s, err := tool.NewSkill(skillFilePath)
 		if err != nil {
-			log.Printf("[WARN] 加载SKILL失败: %v", err)
+			logrus.Warnf("加载SKILL失败: %v", err)
 			continue
 		}
 		a.Skills = append(a.Skills, s)

@@ -3,11 +3,13 @@ package tool
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
+
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 type FileSystem struct {
@@ -71,18 +73,19 @@ func (f *FileSystem) WriteFile(ctx context.Context, params map[string]any) (stri
 	}
 
 	// 确保目录存在
-	path = filepath.Join(f.workspace, path)
-	dir := filepath.Dir(path)
+	localPath := filepath.Join(f.workspace, path)
+
+	dir := filepath.Dir(localPath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return "", err
 	}
 
 	// 写入文件
-	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
+	if err := os.WriteFile(localPath, []byte(content), 0644); err != nil {
 		return "", err
 	}
 
-	log.Printf("文件保存成功:%s\n", path)
+	logrus.Infof("文件保存成功:%s", path)
 	return fmt.Sprintf("Successfully wrote %d bytes to %s", len(content), path), nil
 }
 
@@ -109,8 +112,8 @@ func (f *FileSystem) EditFile(ctx context.Context, params map[string]any) (strin
 	}
 
 	// 读取文件内容
-	path = filepath.Join(f.workspace, path)
-	content, err := os.ReadFile(path)
+	localPath := filepath.Join(f.workspace, path)
+	content, err := os.ReadFile(localPath)
 	if err != nil {
 		return "", fmt.Errorf("failed to read file: %w", err)
 	}
@@ -129,7 +132,7 @@ func (f *FileSystem) EditFile(ctx context.Context, params map[string]any) (strin
 	newContent := strings.ReplaceAll(fileContent, oldStr, newStr)
 
 	// 写入文件
-	if err := os.WriteFile(path, []byte(newContent), 0644); err != nil {
+	if err := os.WriteFile(localPath, []byte(newContent), 0644); err != nil {
 		return "", fmt.Errorf("failed to write file: %w", err)
 	}
 

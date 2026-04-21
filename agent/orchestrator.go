@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
 	"skill-eval/tool"
 
 	"github.com/openai/openai-go/v3"
+	"github.com/sirupsen/logrus"
 )
 
 type Orchestrator struct {
@@ -143,7 +143,7 @@ func (o *Orchestrator) compressMessages() error {
 	}
 
 	summary := resp.Choices[0].Message.Content
-	log.Printf("[INFO] 消息压缩完成，从 %d 条压缩为 %d 条", len(messages), 2+1+keepRecent)
+	logrus.Infof("消息压缩完成，从 %d 条压缩为 %d 条", len(messages), 2+1+keepRecent)
 
 	compressed := make([]openai.ChatCompletionMessageParamUnion, 0, 2+1+keepRecent)
 	compressed = append(compressed, messages[0], messages[1])
@@ -166,7 +166,7 @@ func (o *Orchestrator) Run() {
 
 		// 压缩对话消息
 		if err := o.compressMessages(); err != nil {
-			log.Printf("[WARN] 消息压缩失败: %v", err)
+			logrus.Warnf("消息压缩失败: %v", err)
 		}
 
 		p := openai.ChatCompletionNewParams{
@@ -184,17 +184,17 @@ func (o *Orchestrator) Run() {
 		)
 
 		if chatErr != nil {
-			log.Default().Printf("[ERROR] 大模型对话失败: %v", chatErr)
+			logrus.Errorf("大模型对话失败: %v", chatErr)
 			return
 		}
 
 		if len(chatCompletion.Choices) == 0 {
-			log.Printf("[INFO] Choices 数组为空")
+			logrus.Info("Choices 数组为空")
 			return
 		}
 
 		// 打印原始输出
-		log.Default().Printf("[INFO] 迭代次数：%d, 对话返回: %v \n", o.Context.CurrentIteration, chatCompletion.RawJSON())
+		logrus.Infof("迭代次数：%d, 对话返回: %v", o.Context.CurrentIteration, chatCompletion.RawJSON())
 
 		choice := chatCompletion.Choices[0]
 
@@ -208,10 +208,10 @@ func (o *Orchestrator) Run() {
 		if len(choice.Message.ToolCalls) == 0 {
 			o.Context.ConsecutiveNoToolCall++
 			if o.Context.ConsecutiveNoToolCall >= 2 {
-				log.Printf("[WARN] 连续%d次无工具调用，强制退出循环", o.Context.ConsecutiveNoToolCall)
+				logrus.Warnf("连续%d次无工具调用，强制退出循环", o.Context.ConsecutiveNoToolCall)
 				return
 			}
-			log.Printf("[INFO] 模型未调用工具，提醒使用finish工具")
+			logrus.Info("模型未调用工具，提醒使用finish工具")
 			o.Context.Messages = append(o.Context.Messages, openai.UserMessage("如果任务已完成，请调用finish工具提交最终结果；如果未完成，请继续使用工具执行任务。"))
 			continue
 		}
@@ -225,14 +225,14 @@ func (o *Orchestrator) Run() {
 
 			if err := json.Unmarshal([]byte(tc.Function.Arguments), &params); err != nil {
 				errorMsg := fmt.Sprintf("参数解析失败: %v。原始参数: %s。请检查参数格式是否正确，确保是有效的JSON对象。", err, tc.Function.Arguments)
-				log.Printf("ERROR: %s", errorMsg)
+				logrus.Errorf("%s", errorMsg)
 				o.Context.Messages = append(o.Context.Messages, openai.ToolMessage(errorMsg, tc.ID))
 				continue
 			}
 
 			// 调用结束
 			if name == "finish" {
-				log.Printf("调用结束")
+				logrus.Info("调用结束")
 				finishTool := o.Context.ToolsCollections["finish"]
 				finishResult, finishError := finishTool.Exec(context.Background(), params)
 				if finishError != nil {
@@ -243,14 +243,14 @@ func (o *Orchestrator) Run() {
 			}
 			// 命中目标SKILL
 			if name == o.Context.TargetSkill {
-				log.Printf("[Info] 命中目标SKILL")
+				logrus.Info("命中目标SKILL")
 			}
 
 			// 技能调用
 			if name == "use_skill" {
 				skillName, ok := params["name"].(string)
 				if !ok || skillName == "" {
-					log.Printf("[ERROR] use_skill 参数 name 无效或不存在")
+					logrus.Error("use_skill 参数 name 无效或不存在")
 					o.Context.Messages = append(o.Context.Messages,
 						openai.ToolMessage("参数错误: name 字段必须是字符串且不能为空", tc.ID))
 					continue
@@ -262,14 +262,14 @@ func (o *Orchestrator) Run() {
 			}
 			toolExec, ok := o.Context.ToolsCollections[name]
 			if !ok {
-				log.Printf("[ERROR]: 大模型返回的工具不存在: %s", name)
+				logrus.Errorf("大模型返回的工具不存在: %s", name)
 				o.Context.Messages = append(o.Context.Messages, openai.ToolMessage("tool not found: "+name, tc.ID))
 				continue
 			}
 
 			toolOutPut, toolCallErr := toolExec.Exec(context.Background(), params)
 			if toolCallErr != nil {
-				log.Printf("ERROR，调用工具失败；%s", toolCallErr)
+				logrus.Errorf("调用工具失败；%s", toolCallErr)
 				o.Context.Messages = append(o.Context.Messages, openai.ToolMessage("工具调用失败: "+name+toolCallErr.Error(), tc.ID))
 				continue
 			}
@@ -279,5 +279,5 @@ func (o *Orchestrator) Run() {
 		}
 	}
 
-	log.Printf("[WARN] 达到最大迭代次数(%d)，任务仍未完成", maxIterations)
+	logrus.Warnf("达到最大迭代次数(%d)，任务仍未完成", maxIterations)
 }
