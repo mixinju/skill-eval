@@ -2,6 +2,8 @@ package agent
 
 import (
 	"log"
+	"os"
+	"path/filepath"
 	"skill-eval/tool"
 )
 
@@ -102,16 +104,26 @@ func (a *AgentConfig) RegistryDefaultTools() {
 }
 
 // RegistrySkills 加载SKILL
-// TODO 默认从AutoMan的目录下加载
+// 默认从.claude/skills目录下加载所有的目录
 func (a *AgentConfig) RegistrySkills() {
 
-	paths := []string{"", "", ""}
-	for _, p := range paths {
-		s, err := tool.NewSkill(p)
+	claudeSkillDir := "~/.claude/skills"
+
+	entries, err := os.ReadDir(claudeSkillDir)
+	if err != nil {
+		log.Printf("[WARN] 加载Claude 技能文件夹失败")
+	}
+
+	for _, entry := range entries {
+		if !entry.IsDir() {
+			continue
+		}
+		s, err := tool.NewSkill(filepath.Join(claudeSkillDir, entry.Name()))
 		if err != nil {
 			log.Printf("[WARN] 加载SKILL失败: %v", err)
 			continue
 		}
 		a.Skills = append(a.Skills, s)
 	}
+
 }
