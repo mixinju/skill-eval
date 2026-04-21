@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"time"
@@ -31,6 +32,13 @@ func (b *Bash) Exec(ctx context.Context, params map[string]any) (string, error) 
 	command, ok := params["command"].(string)
 	if !ok {
 		return "", fmt.Errorf("command parameter is required")
+	}
+
+	// 检查 workspace 目录是否存在，不存在则创建
+	if _, err := os.Stat(b.workspace); os.IsNotExist(err) {
+		if err := os.MkdirAll(b.workspace, 0755); err != nil {
+			return "", fmt.Errorf("failed to create workspace directory: %w", err)
+		}
 	}
 
 	ctx, cancel := context.WithTimeout(ctx, b.timeout)
