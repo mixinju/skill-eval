@@ -3,6 +3,7 @@ module skill-eval
 go 1.25
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/openai/openai-go/v3 v3.31.0
 	github.com/sirupsen/logrus v1.9.4
 	gopkg.in/yaml.v3 v3.0.1

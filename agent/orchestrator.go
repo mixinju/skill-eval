@@ -15,6 +15,7 @@ import (
 type Orchestrator struct {
 	ChatProvider *openai.Client
 	Context      *RunContext
+	Tracer       TracerHook
 }
 
 func (o *Orchestrator) SetTargetSkill(name string) {
@@ -73,6 +74,7 @@ type RunContext struct {
 	TargetSkill           string //目标SKILL名称
 	ConsecutiveNoToolCall int    // 连续无工具调用计数
 	CompressThreshold     int    // 消息压缩阈值，默认20
+	LastMessageIndex      int    // 上次 LLM 调用时的消息位置，用于计算增量输入
 
 	UsedToken int64
 }
@@ -99,6 +101,12 @@ func (rc *RunContext) buildSystemPrompt(loaded string) string {
 
 	rc.Messages[0] = openai.SystemMessage(sb.String())
 	return sb.String()
+}
+
+func (o *Orchestrator) emit(event TraceEvent) {
+	if o.Tracer != nil {
+		o.Tracer.OnEvent(event)
+	}
 }
 
 func (o *Orchestrator) compress() error {
@@ -133,14 +141,20 @@ func (o *Orchestrator) compress() error {
 		Model: o.Context.Agent.Model,
 	}
 
+	o.emit(TraceEvent{Type: EventLLMCompressStart, Iteration: o.Context.CurrentIteration, MessageCount: len(middleMessages)})
+
 	resp, err := o.ChatProvider.Chat.Completions.New(context.Background(), summaryReq)
 	if err != nil {
+		o.emit(TraceEvent{Type: EventLLMCompressEnd, Error: err.Error()})
 		return fmt.Errorf("摘要请求失败: %w", err)
 	}
 
 	if len(resp.Choices) == 0 {
+		o.emit(TraceEvent{Type: EventLLMCompressEnd, Error: "摘要返回为空"})
 		return fmt.Errorf("摘要返回为空")
 	}
+
+	o.emit(TraceEvent{Type: EventLLMCompressEnd, TotalTokens: resp.Usage.TotalTokens})
 
 	summary := resp.Choices[0].Message.Content
 	logrus.Infof("消息压缩完成，从 %d 条压缩为 %d 条", len(messages), 2+1+keepRecent)
@@ -157,7 +171,23 @@ func (o *Orchestrator) compress() error {
 func (o *Orchestrator) Run() {
 
 	maxIterations := o.Context.Agent.MaxIterations
-	// 最入最大循环
+
+	o.emit(TraceEvent{
+		Type:       EventRunStart,
+		AgentName:  o.Context.Agent.Name,
+		Model:      o.Context.Agent.Model,
+		UserPrompt: o.Context.Agent.UserPrompt,
+	})
+
+	success := false
+	defer func() {
+		o.emit(TraceEvent{
+			Type:        EventRunEnd,
+			Success:     success,
+			Iteration:   o.Context.CurrentIteration,
+			TotalTokens: o.Context.UsedToken,
+		})
+	}()
 
 	// 初始化-不加载任何一个完整的skill
 	o.Context.buildSystemPrompt("")
@@ -168,6 +198,17 @@ func (o *Orchestrator) Run() {
 		if err := o.compress(); err != nil {
 			logrus.Warnf("消息压缩失败: %v", err)
 		}
+
+		// 计算增量输入
+		incrementalMessage := o.Context.Messages[o.Context.LastMessageIndex:]
+		incrementalJSON, _ := json.Marshal(incrementalMessage)
+
+		o.emit(TraceEvent{
+			Type:         EventLLMStart,
+			Iteration:    o.Context.CurrentIteration,
+			MessageCount: len(o.Context.Messages),
+			LLMInput:     string(incrementalJSON),
+		})
 
 		p := openai.ChatCompletionNewParams{
 			Messages: o.Context.Messages,
@@ -184,19 +225,29 @@ func (o *Orchestrator) Run() {
 		)
 
 		if chatErr != nil {
+			o.emit(TraceEvent{Type: EventLLMEnd, Iteration: o.Context.CurrentIteration, Error: chatErr.Error()})
 			logrus.Errorf("大模型对话失败: %v", chatErr)
 			return
 		}
 
 		if len(chatCompletion.Choices) == 0 {
+			o.emit(TraceEvent{Type: EventLLMEnd, Iteration: o.Context.CurrentIteration, Error: "Choices为空"})
 			logrus.Info("Choices 数组为空")
 			return
 		}
 
-		// 打印原始输出
-		logrus.Infof("迭代次数：%d, 对话返回: %v", o.Context.CurrentIteration, chatCompletion.RawJSON())
-
 		choice := chatCompletion.Choices[0]
+
+		o.emit(TraceEvent{
+			Type:         EventLLMEnd,
+			Iteration:    o.Context.CurrentIteration,
+			TotalTokens:  chatCompletion.Usage.TotalTokens,
+			FinishReason: choice.FinishReason,
+			LLMOutput:    choice.Message.RawJSON(),
+		})
+
+		// 更新增量起点：下次 LLMStart 从当前末尾开始算增量
+		o.Context.LastMessageIndex = len(o.Context.Messages)
 
 		// 更新token
 		o.Context.UsedToken += chatCompletion.Usage.TotalTokens
@@ -233,30 +284,38 @@ func (o *Orchestrator) Run() {
 			// 调用结束
 			if name == "finish" {
 				logrus.Info("调用结束")
+				o.emit(TraceEvent{Type: EventToolStart, Iteration: o.Context.CurrentIteration, CallID: tc.ID, ToolName: name, ToolInput: tc.Function.Arguments})
 				finishTool := o.Context.ToolsCollections["finish"]
 				finishResult, finishError := finishTool.Exec(context.Background(), params)
 				if finishError != nil {
+					o.emit(TraceEvent{Type: EventToolEnd, CallID: tc.ID, Error: finishError.Error()})
 					return
 				}
+				o.emit(TraceEvent{Type: EventToolEnd, CallID: tc.ID, ToolOutput: finishResult})
 				o.Context.Messages = append(o.Context.Messages, openai.ToolMessage(finishResult, tc.ID))
+				success = true
 				return
 			}
 			// 命中目标SKILL
 			if name == o.Context.TargetSkill {
 				logrus.Info("命中目标SKILL")
+				o.emit(TraceEvent{Type: EventTargetSkillHit, Iteration: o.Context.CurrentIteration, ToolName: name})
 			}
 
 			// 技能调用
 			if name == "use_skill" {
+				o.emit(TraceEvent{Type: EventToolStart, Iteration: o.Context.CurrentIteration, CallID: tc.ID, ToolName: name, ToolInput: tc.Function.Arguments})
 				skillName, ok := params["name"].(string)
 				if !ok || skillName == "" {
 					logrus.Error("use_skill 参数 name 无效或不存在")
+					o.emit(TraceEvent{Type: EventToolEnd, CallID: tc.ID, Error: "参数 name 无效"})
 					o.Context.Messages = append(o.Context.Messages,
 						openai.ToolMessage("参数错误: name 字段必须是字符串且不能为空", tc.ID))
 					continue
 				}
 
 				o.Context.buildSystemPrompt(skillName)
+				o.emit(TraceEvent{Type: EventToolEnd, CallID: tc.ID, ToolOutput: "SKILL.md已加载: " + skillName})
 				o.Context.Messages = append(o.Context.Messages, openai.ToolMessage("SKILL.md已加载", tc.ID))
 				continue
 			}
@@ -267,12 +326,17 @@ func (o *Orchestrator) Run() {
 				continue
 			}
 
+			o.emit(TraceEvent{Type: EventToolStart, Iteration: o.Context.CurrentIteration, CallID: tc.ID, ToolName: name, ToolInput: tc.Function.Arguments})
+
 			toolOutPut, toolCallErr := toolExec.Exec(context.Background(), params)
 			if toolCallErr != nil {
 				logrus.Errorf("调用工具失败；%s", toolCallErr)
+				o.emit(TraceEvent{Type: EventToolEnd, CallID: tc.ID, Error: toolCallErr.Error()})
 				o.Context.Messages = append(o.Context.Messages, openai.ToolMessage("工具调用失败: "+name+toolCallErr.Error(), tc.ID))
 				continue
 			}
+
+			o.emit(TraceEvent{Type: EventToolEnd, CallID: tc.ID, ToolOutput: toolOutPut})
 
 			// 构建工具执行结果信息
 			o.Context.Messages = append(o.Context.Messages, openai.ToolMessage(toolOutPut, tc.ID))

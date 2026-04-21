@@ -31,6 +31,7 @@ func main() {
 
 	// 新建调度器
 	o := agent.NewOrchestrator(&client, agentConfig)
+	o.Tracer = agent.NewDefaultTracer("./traces")
 	o.SetTargetSkill("pdf")
 
 	//运行智能体
