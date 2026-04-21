@@ -24,7 +24,7 @@ func NewBash(workspace string, timeout time.Duration) *Bash {
 	id, _ := uuid.NewUUID()
 	now := time.Now()
 	if len(workspace) == 0 {
-		workspace = filepath.Join("~/Desktop/skil-eval-workplace/", now.Format("20060102")+id.String())
+		workspace = filepath.Join("/Users/mixinju/Desktop/skil-eval-workplace/", now.Format("20060102")+"--"+id.String()[:8])
 	}
 
 	return &Bash{workspace: workspace, timeout: timeout}

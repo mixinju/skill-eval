@@ -224,7 +224,9 @@ func (o *Orchestrator) Run() {
 			var params map[string]any
 
 			if err := json.Unmarshal([]byte(tc.Function.Arguments), &params); err != nil {
-				log.Printf("ERROR:  反序列化参数失败%v,原始信息:%s", err, tc.Function.RawJSON())
+				errorMsg := fmt.Sprintf("参数解析失败: %v。原始参数: %s。请检查参数格式是否正确，确保是有效的JSON对象。", err, tc.Function.Arguments)
+				log.Printf("ERROR: %s", errorMsg)
+				o.Context.Messages = append(o.Context.Messages, openai.ToolMessage(errorMsg, tc.ID))
 				continue
 			}
 

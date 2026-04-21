@@ -3,6 +3,7 @@ package tool
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -23,7 +24,7 @@ func NewFileSystem(allowedPaths []string, deniedPaths []string, timeout time.Dur
 	id, _ := uuid.NewUUID()
 	now := time.Now()
 
-	defaultWorkspace := filepath.Join("/Users/mixinju/Desktop/skill-eval-workplace/", now.Format("20060102")+"--"+id.String())
+	defaultWorkspace := filepath.Join("/Users/mixinju/Desktop/skill-eval-workplace/", now.Format("20060102")+"--"+id.String()[:8])
 	return &FileSystem{
 		allowedPaths: allowedPaths,
 		deniedPaths:  deniedPaths,
@@ -84,6 +85,7 @@ func (f *FileSystem) WriteFile(ctx context.Context, params map[string]any) (stri
 		return "", err
 	}
 
+	log.Printf("文件保存成功:%s\n", path)
 	return fmt.Sprintf("Successfully wrote %d bytes to %s", len(content), path), nil
 }
 
