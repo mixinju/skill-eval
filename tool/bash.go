@@ -39,7 +39,7 @@ func (b *Bash) Exec(ctx context.Context, params map[string]any) (string, error) 
 	ctx, cancel := context.WithTimeout(ctx, b.timeout)
 	defer cancel()
 
-	cmd := exec.CommandContext(ctx, "sh", "-c", command)
+	cmd := exec.CommandContext(ctx, "zsh", "-c", command)
 	cmd.Dir = b.workspace
 
 	var stdout, stderr bytes.Buffer

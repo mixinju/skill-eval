@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"skill-eval/tool"
+	"time"
 )
 
 type AgentConfig struct {
@@ -88,7 +89,7 @@ func (a *AgentConfig) RegistryDefaultTools() {
 	fs := tool.NewFileSystem([]string{}, nil, 4)
 	tools = append(tools, fs.GetTools()...)
 
-	bash := tool.NewBash("", 5)
+	bash := tool.NewBash("", 10*time.Second)
 	tools = append(tools, bash.GetTools()...)
 
 	finish := tool.NewFinish()
