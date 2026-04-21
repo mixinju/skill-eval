@@ -3,6 +3,7 @@ package agent
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"strings"
 
@@ -53,11 +54,12 @@ func NewContext(agent AgentConfig) *RunContext {
 	}
 
 	return &RunContext{
-		Agent:            agent,
-		Messages:         messages,
-		ToolsCollections: tools,
-		CurrentIteration: 1,
-		Tools:            toolsMessage,
+		Agent:             agent,
+		Messages:          messages,
+		ToolsCollections:  tools,
+		CurrentIteration:  1,
+		Tools:             toolsMessage,
+		CompressThreshold: 20,
 	}
 }
 
@@ -68,8 +70,9 @@ type RunContext struct {
 	HasSelectedSkills     map[string]tool.Skill
 	ToolsCollections      map[string]tool.Tool
 	CurrentIteration      int
-	TargetSkill           string //目标skill名称
+	TargetSkill           string //目标SKILL名称
 	ConsecutiveNoToolCall int    // 连续无工具调用计数
+	CompressThreshold     int    // 消息压缩阈值，默认20
 
 	UsedToken int64
 }
@@ -98,6 +101,59 @@ func (rc *RunContext) buildSystemPrompt(loaded string) string {
 	return sb.String()
 }
 
+func (o *Orchestrator) compressMessages() error {
+	messages := o.Context.Messages
+	threshold := o.Context.CompressThreshold
+	if threshold <= 0 || len(messages) <= threshold {
+		return nil
+	}
+
+	keepRecent := 4
+	if len(messages)-2 <= keepRecent {
+		return nil
+	}
+
+	middleMessages := messages[2 : len(messages)-keepRecent]
+
+	var sb strings.Builder
+	for _, m := range middleMessages {
+		raw, err := json.Marshal(m)
+		if err != nil {
+			continue
+		}
+		sb.Write(raw)
+		sb.WriteString("\n")
+	}
+
+	summaryReq := openai.ChatCompletionNewParams{
+		Messages: []openai.ChatCompletionMessageParamUnion{
+			openai.SystemMessage("你是一个对话摘要助手。请将以下对话历史压缩为简洁的摘要，保留关键信息、已完成的操作和重要结果。"),
+			openai.UserMessage(sb.String()),
+		},
+		Model: o.Context.Agent.Model,
+	}
+
+	resp, err := o.ChatProvider.Chat.Completions.New(context.Background(), summaryReq)
+	if err != nil {
+		return fmt.Errorf("摘要请求失败: %w", err)
+	}
+
+	if len(resp.Choices) == 0 {
+		return fmt.Errorf("摘要返回为空")
+	}
+
+	summary := resp.Choices[0].Message.Content
+	log.Printf("[INFO] 消息压缩完成，从 %d 条压缩为 %d 条", len(messages), 2+1+keepRecent)
+
+	compressed := make([]openai.ChatCompletionMessageParamUnion, 0, 2+1+keepRecent)
+	compressed = append(compressed, messages[0], messages[1])
+	compressed = append(compressed, openai.UserMessage("以下是之前对话历史的摘要：\n"+summary))
+	compressed = append(compressed, messages[len(messages)-keepRecent:]...)
+	o.Context.Messages = compressed
+
+	return nil
+}
+
 func (o *Orchestrator) Run() {
 
 	maxIterations := o.Context.Agent.MaxIterations
@@ -107,6 +163,11 @@ func (o *Orchestrator) Run() {
 	o.Context.buildSystemPrompt("")
 	for o.Context.CurrentIteration < maxIterations {
 		o.Context.CurrentIteration++
+
+		// 压缩对话消息
+		if err := o.compressMessages(); err != nil {
+			log.Printf("[WARN] 消息压缩失败: %v", err)
+		}
 
 		p := openai.ChatCompletionNewParams{
 			Messages: o.Context.Messages,
@@ -212,4 +273,6 @@ func (o *Orchestrator) Run() {
 			o.Context.Messages = append(o.Context.Messages, openai.ToolMessage(toolOutPut, tc.ID))
 		}
 	}
+
+	log.Printf("[WARN] 达到最大迭代次数(%d)，任务仍未完成", maxIterations)
 }
