@@ -8,8 +8,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Bash struct {
@@ -21,10 +19,9 @@ func NewBash(workspace string, timeout time.Duration) *Bash {
 	if timeout == 0 {
 		timeout = 2 * time.Minute
 	}
-	id, _ := uuid.NewUUID()
 	now := time.Now()
 	if len(workspace) == 0 {
-		workspace = filepath.Join("/Users/mixinju/Desktop/skil-eval-workplace/", now.Format("20060102")+"--"+id.String()[:8])
+		workspace = filepath.Join("/Users/mixinju/Desktop/skill-eval-workplace/", now.Format("2006-01-02"))
 	}
 
 	return &Bash{workspace: workspace, timeout: timeout}
@@ -39,7 +36,7 @@ func (b *Bash) Exec(ctx context.Context, params map[string]any) (string, error) 
 	ctx, cancel := context.WithTimeout(ctx, b.timeout)
 	defer cancel()
 
-	cmd := exec.CommandContext(ctx, "zsh", "-c", command)
+	cmd := exec.CommandContext(ctx, "sh", "-c", command)
 	cmd.Dir = b.workspace
 
 	var stdout, stderr bytes.Buffer

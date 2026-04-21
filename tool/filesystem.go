@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type FileSystem struct {
@@ -21,10 +19,9 @@ type FileSystem struct {
 
 func NewFileSystem(allowedPaths []string, deniedPaths []string, timeout time.Duration) *FileSystem {
 
-	id, _ := uuid.NewUUID()
 	now := time.Now()
 
-	defaultWorkspace := filepath.Join("/Users/mixinju/Desktop/skill-eval-workplace/", now.Format("20060102")+"--"+id.String()[:8])
+	defaultWorkspace := filepath.Join("/Users/mixinju/Desktop/skill-eval-workplace/", now.Format("2006-01-02"))
 	return &FileSystem{
 		allowedPaths: allowedPaths,
 		deniedPaths:  deniedPaths,
@@ -264,7 +261,7 @@ func (f *FileSystem) GetTools() []Tool {
 			},
 			"required": []string{"path"},
 		}, f.ReadFile),
-		NewBaseToolInfo("write_file", "写入文件内容", map[string]any{
+		NewBaseToolInfo("write_file", "写入文件内容、保存文件到本地", map[string]any{
 			"type": "object",
 			"properties": map[string]any{
 				"path": map[string]any{
