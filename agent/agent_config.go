@@ -97,8 +97,8 @@ func (a *AgentConfig) RegistryDefaultTools() {
     a.Tools = tools
 }
 
-// RegistrySkill 加载SKILL
-func (a *AgentConfig) RegistrySkill() {
+// RegistrySkills 加载SKILL
+func (a *AgentConfig) RegistrySkills() {
 
     pdf := tool.NewSkill("")
     a.Skills = append(a.Skills, pdf)
@@ -108,5 +108,4 @@ func (a *AgentConfig) RegistrySkill() {
 
     ppt := tool.NewSkill("")
     a.Skills = append(a.Skills, ppt)
-
 }
