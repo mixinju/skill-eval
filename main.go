@@ -24,6 +24,7 @@ func main() {
 
     // 新建调度器
     o := agent.NewOrchestrator(&client, agentConfig)
+    o.SetTargetSkill("pdf")
 
     //运行智能体
     o.Run()
