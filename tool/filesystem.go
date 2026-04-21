@@ -46,6 +46,7 @@ func (f *FileSystem) ReadFile(ctx context.Context, params map[string]any) (strin
 		return "", fmt.Errorf("access to path %s is not allowed", path)
 	}
 
+	path = filepath.Join(f.workspace, path)
 	content, err := os.ReadFile(path)
 	if err != nil {
 		return "", err
@@ -72,6 +73,7 @@ func (f *FileSystem) WriteFile(ctx context.Context, params map[string]any) (stri
 	}
 
 	// 确保目录存在
+	path = filepath.Join(f.workspace, path)
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return "", err
@@ -108,6 +110,7 @@ func (f *FileSystem) EditFile(ctx context.Context, params map[string]any) (strin
 	}
 
 	// 读取文件内容
+	path = filepath.Join(f.workspace, path)
 	content, err := os.ReadFile(path)
 	if err != nil {
 		return "", fmt.Errorf("failed to read file: %w", err)
@@ -117,7 +120,7 @@ func (f *FileSystem) EditFile(ctx context.Context, params map[string]any) (strin
 
 	// 检查旧字符串是否存在
 	if !strings.Contains(fileContent, oldStr) {
-		return "", fmt.Errorf("old_string not found in file. Please verify the exact text to replace.")
+		return "", fmt.Errorf("old_string not found in file. Please verify the exact text to replace")
 	}
 
 	// 计算替换次数
@@ -146,6 +149,7 @@ func (f *FileSystem) ListDir(ctx context.Context, params map[string]any) (string
 		return "", fmt.Errorf("access to path %s is not allowed", path)
 	}
 
+	path = filepath.Join(f.workspace, path)
 	entries, err := os.ReadDir(path)
 	if err != nil {
 		return "", err
