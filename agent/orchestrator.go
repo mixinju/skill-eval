@@ -62,13 +62,14 @@ func NewContext(agent AgentConfig) *RunContext {
 }
 
 type RunContext struct {
-	Agent             AgentConfig
-	Messages          []openai.ChatCompletionMessageParamUnion
-	Tools             []openai.ChatCompletionToolUnionParam
-	HasSelectedSkills map[string]tool.Skill
-	ToolsCollections  map[string]tool.Tool
-	CurrentIteration  int
-	TargetSkill       string //目标skill名称
+	Agent                 AgentConfig
+	Messages              []openai.ChatCompletionMessageParamUnion
+	Tools                 []openai.ChatCompletionToolUnionParam
+	HasSelectedSkills     map[string]tool.Skill
+	ToolsCollections      map[string]tool.Tool
+	CurrentIteration      int
+	TargetSkill           string //目标skill名称
+	ConsecutiveNoToolCall int    // 连续无工具调用计数
 
 	UsedToken int64
 }
@@ -140,6 +141,19 @@ func (o *Orchestrator) Run() {
 		o.Context.Messages = append(o.Context.Messages, choice.Message.ToParam())
 
 		// 工具调用
+		if len(choice.Message.ToolCalls) == 0 {
+			o.Context.ConsecutiveNoToolCall++
+			if o.Context.ConsecutiveNoToolCall >= 2 {
+				log.Printf("[WARN] 连续%d次无工具调用，强制退出循环", o.Context.ConsecutiveNoToolCall)
+				return
+			}
+			log.Printf("[INFO] 模型未调用工具，提醒使用finish工具")
+			o.Context.Messages = append(o.Context.Messages, openai.UserMessage("如果任务已完成，请调用finish工具提交最终结果；如果未完成，请继续使用工具执行任务。"))
+			continue
+		}
+
+		o.Context.ConsecutiveNoToolCall = 0
+
 		for _, tc := range choice.Message.ToolCalls {
 
 			name := tc.Function.Name
