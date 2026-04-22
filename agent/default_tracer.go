@@ -135,6 +135,11 @@ func (t *DefaultTracer) OnEvent(event TraceEvent) {
 		span.Duration = event.Timestamp.Sub(span.StartTime).Milliseconds()
 		span.ToolOutput = event.ToolOutput
 		span.Error = event.Error
+
+		// 结束时保留产物信息到最外层的Trace上
+		if event.ToolName == "finish" {
+			t.trace.ArtifactsAndResult = event.ToolOutput
+		}
 		delete(t.toolSpans, event.CallID)
 
 	}

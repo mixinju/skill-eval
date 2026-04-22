@@ -81,19 +81,18 @@ type Span struct {
 }
 
 type Trace struct {
-	ID          string    `json:"id"`
-	AgentName   string    `json:"agentName"`
-	Model       string    `json:"model"`
-	UserPrompt  string    `json:"userPrompt"`
-	TargetSkill string    `json:"targetSkill,omitempty"`
-	StartTime   time.Time `json:"startTime"`
-	EndTime     time.Time `json:"endTime,omitempty"`
-	TotalTokens int64     `json:"totalTokens"`
-	Iterations  int       `json:"iterations"`
-	Success     bool      `json:"success"`
-	Spans       []*Span   `json:"spans"`
-	Result      string    `json:"result,omitempty"`
-	Artifacts   []string  `json:"artifacts,omitempty"`
+	ID                 string    `json:"id"`
+	AgentName          string    `json:"agentName"`
+	Model              string    `json:"model"`
+	UserPrompt         string    `json:"userPrompt"`
+	TargetSkill        string    `json:"targetSkill,omitempty"`
+	StartTime          time.Time `json:"startTime"`
+	EndTime            time.Time `json:"endTime,omitempty"`
+	TotalTokens        int64     `json:"totalTokens"`
+	Iterations         int       `json:"iterations"`
+	Success            bool      `json:"success"`
+	Spans              []*Span   `json:"spans"`
+	ArtifactsAndResult string
 }
 
 type TracerHook interface {
