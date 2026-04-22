@@ -16,10 +16,10 @@ func NewGetWeather() *GetWeather {
 func (w *GetWeather) Query(ctx context.Context, params map[string]any) (string, error) {
 	city, ok := params["location"].(string)
 	if !ok {
-		return "", fmt.Errorf("param 'city' is required")
+		return "", fmt.Errorf("缺少必填参数: location")
 	}
 
-	s := fmt.Sprintf(" %s The city's temperature is 23-28°C, with gusts of force 5-6. 城市的温度是23-28摄氏度,5-6级阵风", city)
+	s := fmt.Sprintf(" %s 城市的温度是23-28摄氏度，5-6级阵风", city)
 
 	return s, nil
 }

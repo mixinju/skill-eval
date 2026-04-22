@@ -36,14 +36,14 @@ func NewFileSystem(allowedPaths []string, deniedPaths []string, timeout time.Dur
 func (f *FileSystem) ReadFile(ctx context.Context, params map[string]any) (string, error) {
 	path, ok := params["path"].(string)
 	if !ok {
-		return "", fmt.Errorf("path parameter is required")
+		return "", fmt.Errorf("缺少必填参数: path")
 	}
 
 	ctx, cancelFunc := context.WithTimeout(ctx, f.timeout)
 	defer cancelFunc()
 	// 检查路径权限
 	if !f.isAllowed(path) {
-		return "", fmt.Errorf("access to path %s is not allowed", path)
+		return "", fmt.Errorf("禁止访问路径: %s", path)
 	}
 
 	path = filepath.Join(f.workspace, path)
@@ -59,17 +59,17 @@ func (f *FileSystem) ReadFile(ctx context.Context, params map[string]any) (strin
 func (f *FileSystem) WriteFile(ctx context.Context, params map[string]any) (string, error) {
 	path, ok := params["path"].(string)
 	if !ok {
-		return "", fmt.Errorf("path parameter is required")
+		return "", fmt.Errorf("缺少必填参数: path")
 	}
 
 	content, ok := params["content"].(string)
 	if !ok {
-		return "", fmt.Errorf("content parameter is required")
+		return "", fmt.Errorf("缺少必填参数: content")
 	}
 
 	// 检查路径权限
 	if !f.isAllowed(path) {
-		return "", fmt.Errorf("access to path %s is not allowed", path)
+		return "", fmt.Errorf("禁止访问路径: %s", path)
 	}
 
 	// 确保目录存在
@@ -86,43 +86,43 @@ func (f *FileSystem) WriteFile(ctx context.Context, params map[string]any) (stri
 	}
 
 	logrus.Infof("文件保存成功:%s", path)
-	return fmt.Sprintf("Successfully wrote %d bytes to %s", len(content), localPath), nil
+	return fmt.Sprintf("成功写入 %d 字节到 %s", len(content), localPath), nil
 }
 
 // EditFile 编辑文件（精确字符串替换）
 func (f *FileSystem) EditFile(ctx context.Context, params map[string]any) (string, error) {
 	path, ok := params["path"].(string)
 	if !ok {
-		return "", fmt.Errorf("path parameter is required")
+		return "", fmt.Errorf("缺少必填参数: path")
 	}
 
 	oldStr, ok := params["old_string"].(string)
 	if !ok {
-		return "", fmt.Errorf("old_string parameter is required")
+		return "", fmt.Errorf("缺少必填参数: old_string")
 	}
 
 	newStr, ok := params["new_string"].(string)
 	if !ok {
-		return "", fmt.Errorf("new_string parameter is required")
+		return "", fmt.Errorf("缺少必填参数: new_string")
 	}
 
 	// 检查路径权限
 	if !f.isAllowed(path) {
-		return "", fmt.Errorf("access to path %s is not allowed", path)
+		return "", fmt.Errorf("禁止访问路径: %s", path)
 	}
 
 	// 读取文件内容
 	localPath := filepath.Join(f.workspace, path)
 	content, err := os.ReadFile(localPath)
 	if err != nil {
-		return "", fmt.Errorf("failed to read file: %w", err)
+		return "", fmt.Errorf("读取文件失败: %w", err)
 	}
 
 	fileContent := string(content)
 
 	// 检查旧字符串是否存在
 	if !strings.Contains(fileContent, oldStr) {
-		return "", fmt.Errorf("old_string not found in file. Please verify the exact text to replace")
+		return "", fmt.Errorf("未在文件中找到要替换的字符串，请确认原始文本是否正确")
 	}
 
 	// 计算替换次数
@@ -133,23 +133,23 @@ func (f *FileSystem) EditFile(ctx context.Context, params map[string]any) (strin
 
 	// 写入文件
 	if err := os.WriteFile(localPath, []byte(newContent), 0644); err != nil {
-		return "", fmt.Errorf("failed to write file: %w", err)
+		return "", fmt.Errorf("写入文件失败: %w", err)
 	}
 
 	// 写入文件返回实际地址
-	return fmt.Sprintf("Successfully replaced %d occurrence(s) in %s", occurrences, localPath), nil
+	return fmt.Sprintf("成功替换 %d 处匹配内容，文件: %s", occurrences, localPath), nil
 }
 
 // ListDir 列出目录
 func (f *FileSystem) ListDir(ctx context.Context, params map[string]any) (string, error) {
 	path, ok := params["path"].(string)
 	if !ok {
-		return "", fmt.Errorf("path parameter is required")
+		return "", fmt.Errorf("缺少必填参数: path")
 	}
 
 	// 检查路径权限
 	if !f.isAllowed(path) {
-		return "", fmt.Errorf("access to path %s is not allowed", path)
+		return "", fmt.Errorf("禁止访问路径: %s", path)
 	}
 
 	path = filepath.Join(f.workspace, path)
@@ -174,12 +174,12 @@ func (f *FileSystem) ListDir(ctx context.Context, params map[string]any) (string
 func (f *FileSystem) UpdateConfig(ctx context.Context, params map[string]any) (string, error) {
 	fileType, ok := params["file"].(string)
 	if !ok {
-		return "", fmt.Errorf("file parameter is required (identity, agents, soul, or user)")
+		return "", fmt.Errorf("缺少必填参数: file（可选值: identity, agents, soul, user）")
 	}
 
 	content, ok := params["content"].(string)
 	if !ok {
-		return "", fmt.Errorf("content parameter is required")
+		return "", fmt.Errorf("缺少必填参数: content")
 	}
 
 	// 验证文件类型
@@ -192,33 +192,33 @@ func (f *FileSystem) UpdateConfig(ctx context.Context, params map[string]any) (s
 
 	filename, valid := validFiles[fileType]
 	if !valid {
-		return "", fmt.Errorf("invalid file type: %s (must be one of: identity, agents, soul, user)", fileType)
+		return "", fmt.Errorf("无效的文件类型: %s（可选值: identity, agents, soul, user）", fileType)
 	}
 
 	// 构建完整路径
 	if f.workspace == "" {
-		return "", fmt.Errorf("workspace path is not configured")
+		return "", fmt.Errorf("工作区路径未配置")
 	}
 	path := filepath.Join(f.workspace, filename)
 
 	// 确保目录存在
 	if err := os.MkdirAll(f.workspace, 0755); err != nil {
-		return "", fmt.Errorf("failed to create workspace directory: %w", err)
+		return "", fmt.Errorf("创建工作区目录失败: %w", err)
 	}
 
 	// 写入文件
 	if err := os.WriteFile(path, []byte(content), 0644); err != nil {
-		return "", fmt.Errorf("failed to write config file: %w", err)
+		return "", fmt.Errorf("写入配置文件失败: %w", err)
 	}
 
-	return fmt.Sprintf("Successfully updated %s\n\nThe changes will take effect in the next conversation.", filename), nil
+	return fmt.Sprintf("成功更新配置文件 %s\n\n更改将在下次对话时生效。", filename), nil
 }
 
 // ReadConfig 读取配置文件
 func (f *FileSystem) ReadConfig(ctx context.Context, params map[string]any) (string, error) {
 	fileType, ok := params["file"].(string)
 	if !ok {
-		return "", fmt.Errorf("file parameter is required (identity, agents, soul, or user)")
+		return "", fmt.Errorf("缺少必填参数: file（可选值: identity, agents, soul, user）")
 	}
 
 	// 验证文件类型
@@ -231,12 +231,12 @@ func (f *FileSystem) ReadConfig(ctx context.Context, params map[string]any) (str
 
 	filename, valid := validFiles[fileType]
 	if !valid {
-		return "", fmt.Errorf("invalid file type: %s (must be one of: identity, agents, soul, user)", fileType)
+		return "", fmt.Errorf("无效的文件类型: %s（可选值: identity, agents, soul, user）", fileType)
 	}
 
 	// 构建完整路径
 	if f.workspace == "" {
-		return "", fmt.Errorf("workspace path is not configured")
+		return "", fmt.Errorf("工作区路径未配置")
 	}
 	path := filepath.Join(f.workspace, filename)
 
@@ -244,7 +244,7 @@ func (f *FileSystem) ReadConfig(ctx context.Context, params map[string]any) (str
 	content, err := os.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return fmt.Sprintf("Config file %s does not exist yet. Use update_config to create it.", filename), nil
+			return fmt.Sprintf("配置文件 %s 尚不存在，请使用 update_config 创建。", filename), nil
 		}
 		return "", err
 	}

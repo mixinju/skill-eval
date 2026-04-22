@@ -37,7 +37,7 @@ func (f *Finish) Exec(ctx context.Context, params map[string]any) (string, error
     fr := finishResult{Result: result, Artifacts: artifacts}
     data, err := json.Marshal(fr)
     if err != nil {
-        return "", fmt.Errorf("failed to marshal finish result: %w", err)
+        return "", fmt.Errorf("序列化完成结果失败: %w", err)
     }
     return string(data), nil
 }

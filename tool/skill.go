@@ -41,12 +41,12 @@ func NewSkill(filePath string) (Skill, error) {
 // 要求 s.FilePath 已经设置为 SKILL.md 的绝对路径
 func (s *Skill) Load() error {
     if s.FilePath == "" {
-        return fmt.Errorf("skill FilePath is empty")
+        return fmt.Errorf("技能文件路径为空")
     }
 
     data, err := os.ReadFile(s.FilePath)
     if err != nil {
-        return fmt.Errorf("read skill file %s: %w", s.FilePath, err)
+        return fmt.Errorf("读取技能文件 %s 失败: %w", s.FilePath, err)
     }
 
     // 设置 BaseDir 为 SKILL.md 所在目录
@@ -55,18 +55,18 @@ func (s *Skill) Load() error {
     // 解析 YAML Front Matter 和 Markdown 正文
     frontMatter, content, err := parseFrontMatter(data)
     if err != nil {
-        return fmt.Errorf("parse front matter from %s: %w", s.FilePath, err)
+        return fmt.Errorf("解析 %s 的 front matter 失败: %w", s.FilePath, err)
     }
 
     if err := yaml.Unmarshal(frontMatter, s); err != nil {
-        return fmt.Errorf("unmarshal front matter: %w", err)
+        return fmt.Errorf("反序列化 front matter 失败: %w", err)
     }
 
     s.Content = string(content)
 
     // 扫描 BaseDir 下的资源文件（排除 SKILL.md 自身）
     if err := s.loadResources(); err != nil {
-        return fmt.Errorf("load resources: %w", err)
+        return fmt.Errorf("加载资源文件失败: %w", err)
     }
 
     return nil
@@ -75,17 +75,17 @@ func (s *Skill) Load() error {
 // Resource 加载资源文件，返回文件内容
 func (s *Skill) Resource(name string) (string, error) {
     if s.Resources == nil {
-        return "", fmt.Errorf("no resources loaded")
+        return "", fmt.Errorf("未加载任何资源文件")
     }
 
     path, ok := s.Resources[name]
     if !ok {
-        return "", fmt.Errorf("resource %q not found", name)
+        return "", fmt.Errorf("未找到资源文件: %q", name)
     }
 
     data, err := os.ReadFile(path)
     if err != nil {
-        return "", fmt.Errorf("read resource %s: %w", path, err)
+        return "", fmt.Errorf("读取资源文件 %s 失败: %w", path, err)
     }
 
     return string(data), nil
@@ -113,7 +113,7 @@ func (s *Skill) loadResources() error {
         // 计算相对路径作为 key
         relPath, err := filepath.Rel(s.BaseDir, path)
         if err != nil {
-            return fmt.Errorf("get relative path for %s: %w", path, err)
+            return fmt.Errorf("获取 %s 的相对路径失败: %w", path, err)
         }
 
         s.Resources[relPath] = path
@@ -134,13 +134,13 @@ func (s *Skill) loadResources() error {
 func parseFrontMatter(data []byte) (frontMatter []byte, content []byte, err error) {
     // Front Matter 以 "---" 包裹
     if !bytes.HasPrefix(data, []byte("---")) {
-        return nil, nil, fmt.Errorf("skill file must start with YAML front matter (---)")
+        return nil, nil, fmt.Errorf("技能文件必须以 YAML front matter (---) 开头")
     }
 
     // 找到第二个 "---"
     endIdx := bytes.Index(data[3:], []byte("---"))
     if endIdx == -1 {
-        return nil, nil, fmt.Errorf("missing closing --- in YAML front matter")
+        return nil, nil, fmt.Errorf("YAML front matter 缺少结束标记 ---")
     }
 
     frontMatter = data[3 : endIdx+3]

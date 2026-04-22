@@ -31,13 +31,13 @@ func NewBash(workspace string, timeout time.Duration) *Bash {
 func (b *Bash) Exec(ctx context.Context, params map[string]any) (string, error) {
 	command, ok := params["command"].(string)
 	if !ok {
-		return "", fmt.Errorf("command parameter is required")
+		return "", fmt.Errorf("缺少必填参数: command")
 	}
 
 	// 检查 workspace 目录是否存在，不存在则创建
 	if _, err := os.Stat(b.workspace); os.IsNotExist(err) {
 		if err := os.MkdirAll(b.workspace, 0755); err != nil {
-			return "", fmt.Errorf("failed to create workspace directory: %w", err)
+			return "", fmt.Errorf("创建工作区目录失败: %w", err)
 		}
 	}
 
@@ -59,11 +59,11 @@ func (b *Bash) Exec(ctx context.Context, params map[string]any) (string, error) 
 	}
 
 	if errors.Is(ctx.Err(), context.DeadlineExceeded) {
-		return output, fmt.Errorf("command timed out after %s", b.timeout)
+		return output, fmt.Errorf("命令执行超时，已超过 %s", b.timeout)
 	}
 
 	if err != nil {
-		return output, fmt.Errorf("command exited with error: %w", err)
+		return output, fmt.Errorf("命令执行出错: %w", err)
 	}
 
 	return output, nil
