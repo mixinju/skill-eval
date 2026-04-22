@@ -18,6 +18,13 @@ type Orchestrator struct {
 	Tracer       TracerHook
 }
 
+func (o *Orchestrator) GetTrace() *Trace {
+	if o.Tracer != nil {
+		return o.Tracer.GetTrace()
+	}
+	return nil
+}
+
 func (o *Orchestrator) SetTargetSkill(name string) {
 	if o.Context == nil {
 		return

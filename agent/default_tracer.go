@@ -31,6 +31,10 @@ func (t *DefaultTracer) Id() string {
 	return t.id
 }
 
+func (t *DefaultTracer) GetTrace() *Trace {
+	return t.trace
+}
+
 func (t *DefaultTracer) OnEvent(event TraceEvent) {
 	event.Timestamp = time.Now()
 

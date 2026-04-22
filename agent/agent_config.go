@@ -28,7 +28,7 @@ func NewAgentConfig(opts ...ConfigOpt) AgentConfig {
 	for _, opt := range opts {
 		opt(a)
 	}
-	return a
+	return *a
 }
 
 func WithName(name string) ConfigOpt {

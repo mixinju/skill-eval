@@ -15,6 +15,7 @@ const (
 	EventToolEnd          EventType = "tool_end"
 	EventSkillStart       EventType = "skill_start"
 	EventSkillEnd         EventType = "skill_end"
+	EventMarkArtifacts    EventType = "mark_artifacts"
 )
 
 type TraceEvent struct {
@@ -91,9 +92,12 @@ type Trace struct {
 	Iterations  int       `json:"iterations"`
 	Success     bool      `json:"success"`
 	Spans       []*Span   `json:"spans"`
+	Result      string    `json:"result,omitempty"`
+	Artifacts   []string  `json:"artifacts,omitempty"`
 }
 
 type TracerHook interface {
 	OnEvent(event TraceEvent)
 	Id() string
+	GetTrace() *Trace
 }
