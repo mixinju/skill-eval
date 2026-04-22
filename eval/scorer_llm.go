@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"skill-eval/tool"
 	"strings"
 
 	"skill-eval/agent"
@@ -24,12 +25,17 @@ func NewLLMJudgeScorer(client *openai.Client, model string) *LLMJudgeScorer {
 func (s *LLMJudgeScorer) Name() string { return "llm_judge" }
 
 func (s *LLMJudgeScorer) Score(trace *agent.Trace) Verdict {
-	if len(trace.Artifacts) == 0 {
+
+	var f tool.FinishResult
+	if err := json.Unmarshal([]byte(trace.ArtifactsAndResult), &f); err != nil {
+		logrus.Warnf("ArtifactsAndResult 反序列化失败 %v", err.Error())
+	}
+	if len(f.Artifacts) == 0 {
 		return Verdict{Name: s.Name(), Pass: false, Score: 0, Reason: "无产物文件，跳过 LLM 评分"}
 	}
 
 	var contents []string
-	for _, path := range trace.Artifacts {
+	for _, path := range f.Artifacts {
 		text, err := ExtractContent(path)
 		if err != nil {
 			logrus.Warnf("[LLMJudge] 提取文件内容失败 %s: %v", path, err)
@@ -55,7 +61,7 @@ func (s *LLMJudgeScorer) Score(trace *agent.Trace) Verdict {
 
 	resp, err := s.Client.Chat.Completions.New(context.Background(), openai.ChatCompletionNewParams{
 		Messages: []openai.ChatCompletionMessageParamUnion{
-			openai.UserMessage(prompt),
+			openai.SystemMessage(prompt),
 		},
 		Model: s.Model,
 	})
