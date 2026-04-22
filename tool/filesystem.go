@@ -23,7 +23,11 @@ func NewFileSystem(allowedPaths []string, deniedPaths []string, timeout time.Dur
 
 	now := time.Now()
 
-	defaultWorkspace := filepath.Join("/Users/mixinju/Desktop/skill-eval-workplace/", now.Format("2006-01-02"))
+	workspace := os.Getenv("EVAL_WORKPLACE")
+	if workspace == "" {
+		workspace = "."
+	}
+	defaultWorkspace := filepath.Join(workspace, now.Format("20060102"))
 	return &FileSystem{
 		allowedPaths: allowedPaths,
 		deniedPaths:  deniedPaths,
@@ -41,13 +45,13 @@ func (f *FileSystem) ReadFile(ctx context.Context, params map[string]any) (strin
 
 	ctx, cancelFunc := context.WithTimeout(ctx, f.timeout)
 	defer cancelFunc()
-	// 检查路径权限
-	if !f.isAllowed(path) {
+
+	localPath := filepath.Join(f.workspace, path)
+	if !f.isAllowed(localPath) {
 		return "", fmt.Errorf("禁止访问路径: %s", path)
 	}
 
-	path = filepath.Join(f.workspace, path)
-	content, err := os.ReadFile(path)
+	content, err := os.ReadFile(localPath)
 	if err != nil {
 		return "", err
 	}
@@ -67,13 +71,10 @@ func (f *FileSystem) WriteFile(ctx context.Context, params map[string]any) (stri
 		return "", fmt.Errorf("缺少必填参数: content")
 	}
 
-	// 检查路径权限
-	if !f.isAllowed(path) {
+	localPath := filepath.Join(f.workspace, path)
+	if !f.isAllowed(localPath) {
 		return "", fmt.Errorf("禁止访问路径: %s", path)
 	}
-
-	// 确保目录存在
-	localPath := filepath.Join(f.workspace, path)
 
 	dir := filepath.Dir(localPath)
 	if err := os.MkdirAll(dir, 0755); err != nil {
@@ -107,12 +108,12 @@ func (f *FileSystem) EditFile(ctx context.Context, params map[string]any) (strin
 	}
 
 	// 检查路径权限
-	if !f.isAllowed(path) {
+	localPath := filepath.Join(f.workspace, path)
+	if !f.isAllowed(localPath) {
 		return "", fmt.Errorf("禁止访问路径: %s", path)
 	}
 
 	// 读取文件内容
-	localPath := filepath.Join(f.workspace, path)
 	content, err := os.ReadFile(localPath)
 	if err != nil {
 		return "", fmt.Errorf("读取文件失败: %w", err)
@@ -147,13 +148,12 @@ func (f *FileSystem) ListDir(ctx context.Context, params map[string]any) (string
 		return "", fmt.Errorf("缺少必填参数: path")
 	}
 
-	// 检查路径权限
-	if !f.isAllowed(path) {
+	localPath := filepath.Join(f.workspace, path)
+	if !f.isAllowed(localPath) {
 		return "", fmt.Errorf("禁止访问路径: %s", path)
 	}
 
-	path = filepath.Join(f.workspace, path)
-	entries, err := os.ReadDir(path)
+	entries, err := os.ReadDir(localPath)
 	if err != nil {
 		return "", err
 	}

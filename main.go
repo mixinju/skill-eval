@@ -15,15 +15,15 @@ func main() {
 
 	client := providers.NewClient()
 
-	agentConfig := agent.AgentConfig{
-		Name:          "天气小助手",
-		Description:   "天气小助手",
-		SystemPrompt:  "天气小助手，当你完成任务时，需要调用finish工具",
-		UserPrompt:    "查询下南京的天气，最后把结果保存为pdf文件",
-		Model:         "glm-5",
-		MaxToolCount:  10,
-		MaxIterations: 10,
-	}
+	agentConfig := agent.NewAgentConfig(
+		agent.WithName("天气小助手"),
+		agent.WithDescription("天气小助手"),
+		agent.WithSystemPrompt("天气小助手，当你完成任务时，需要调用finish工具"),
+		agent.WithUserPrompt("查询下南京的天气，最后把结果保存为pdf文件"),
+		agent.WithModel("glm-5"),
+		agent.WithMaxToolCount(10),
+		agent.WithMaxIterations(10),
+	)
 
 	// 注册默认工具
 	agentConfig.RegistryDefaultTools()

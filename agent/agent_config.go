@@ -23,8 +23,7 @@ type AgentConfig struct {
 
 type ConfigOpt func(*AgentConfig)
 
-func NewAgentConfig(opts ...ConfigOpt) *AgentConfig {
-
+func NewAgentConfig(opts ...ConfigOpt) AgentConfig {
 	a := &AgentConfig{}
 	for _, opt := range opts {
 		opt(a)
@@ -33,45 +32,31 @@ func NewAgentConfig(opts ...ConfigOpt) *AgentConfig {
 }
 
 func WithName(name string) ConfigOpt {
-	return func(c *AgentConfig) {
-		c.Name = name
-	}
+	return func(c *AgentConfig) { c.Name = name }
 }
 
-func WithDescription(description string) ConfigOpt {
-	return func(c *AgentConfig) {
-		c.Description = description
-	}
+func WithDescription(desc string) ConfigOpt {
+	return func(c *AgentConfig) { c.Description = desc }
 }
 
 func WithSystemPrompt(prompt string) ConfigOpt {
-	return func(c *AgentConfig) {
-		c.SystemPrompt = prompt
-	}
+	return func(c *AgentConfig) { c.SystemPrompt = prompt }
+}
+
+func WithUserPrompt(prompt string) ConfigOpt {
+	return func(c *AgentConfig) { c.UserPrompt = prompt }
 }
 
 func WithModel(model string) ConfigOpt {
-	return func(c *AgentConfig) {
-		c.Model = model
-	}
-}
-
-func WithTools(tools ...tool.Tool) ConfigOpt {
-	return func(c *AgentConfig) {
-		c.Tools = append(c.Tools, tools...)
-	}
+	return func(c *AgentConfig) { c.Model = model }
 }
 
 func WithMaxToolCount(max int) ConfigOpt {
-	return func(c *AgentConfig) {
-		c.MaxToolCount = max
-	}
+	return func(c *AgentConfig) { c.MaxToolCount = max }
 }
 
 func WithMaxIterations(max int) ConfigOpt {
-	return func(c *AgentConfig) {
-		c.MaxIterations = max
-	}
+	return func(c *AgentConfig) { c.MaxIterations = max }
 }
 
 func (a *AgentConfig) RegistryTool(tool ...tool.Tool) bool {
@@ -87,7 +72,7 @@ func (a *AgentConfig) RegistryDefaultTools() {
 
 	var tools []tool.Tool
 
-	fs := tool.NewFileSystem([]string{}, nil, 4)
+	fs := tool.NewFileSystem([]string{}, nil, 4*time.Second)
 	tools = append(tools, fs.GetTools()...)
 
 	bash := tool.NewBash("", 10*time.Second)
@@ -109,7 +94,11 @@ func (a *AgentConfig) RegistryDefaultTools() {
 // 默认从.claude/skills目录下加载所有的目录
 func (a *AgentConfig) RegistrySkills() {
 
-	claudeSkillDir := "/Users/mixinju/.claude/skills"
+	claudeSkillDir := os.Getenv("EVAL_DEFAULT_SKILL_DIR")
+	if claudeSkillDir == "" {
+		logrus.Warn("环境变量 EVAL_DEFAULT_SKILL_DIR 未设置，跳过技能加载")
+		return
+	}
 
 	entries, err := os.ReadDir(claudeSkillDir)
 	if err != nil {

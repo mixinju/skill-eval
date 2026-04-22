@@ -22,7 +22,11 @@ func NewBash(workspace string, timeout time.Duration) *Bash {
 	}
 	now := time.Now()
 	if len(workspace) == 0 {
-		workspace = filepath.Join("/Users/mixinju/Desktop/skill-eval-workplace/", now.Format("2006-01-02"))
+		workspace = os.Getenv("EVAL_WORKPLACE")
+		if workspace == "" {
+			workspace = "."
+		}
+		workspace = filepath.Join(workspace, now.Format("20060102"))
 	}
 
 	return &Bash{workspace: workspace, timeout: timeout}
