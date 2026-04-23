@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@ant-design/charts':
+        specifier: ^2.6.7
+        version: 2.6.7(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@ant-design/icons':
         specifier: ^6.1.1
         version: 6.1.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -60,6 +63,24 @@ importers:
 
 packages:
 
+  '@ant-design/charts-util@0.0.1-alpha.7':
+    resolution: {integrity: sha1-ORUrcQaXD6oia6hX+uZKDrMvMLk=, tarball: http://r.npm.sankuai.com/@ant-design/charts-util/download/@ant-design/charts-util-0.0.1-alpha.7.tgz}
+    peerDependencies:
+      react: '>=16.8.4'
+      react-dom: '>=16.8.4'
+
+  '@ant-design/charts-util@0.0.3':
+    resolution: {integrity: sha1-bkfT+ORRR/4+/QU5IuhwjKAmQ2I=, tarball: http://r.npm.sankuai.com/@ant-design/charts-util/download/@ant-design/charts-util-0.0.3.tgz}
+    peerDependencies:
+      react: '>=16.8.4'
+      react-dom: '>=16.8.4'
+
+  '@ant-design/charts@2.6.7':
+    resolution: {integrity: sha1-RtZlHV3NvE5IMLVr8yY2zr9jWR0=, tarball: http://r.npm.sankuai.com/@ant-design/charts/download/@ant-design/charts-2.6.7.tgz}
+    peerDependencies:
+      react: '>=16.8.4'
+      react-dom: '>=16.8.4'
+
   '@ant-design/colors@8.0.1':
     resolution: {integrity: sha1-a1RE8qtAYcexqkvHdq2wI7AlMWE=, tarball: http://r.npm.sankuai.com/@ant-design/colors/download/@ant-design/colors-8.0.1.tgz}
 
@@ -79,6 +100,12 @@ packages:
     resolution: {integrity: sha1-/uVrlUJ8C1WyFsk9mn80c/MWFbU=, tarball: http://r.npm.sankuai.com/@ant-design/fast-color/download/@ant-design/fast-color-3.0.1.tgz}
     engines: {node: '>=8.x'}
 
+  '@ant-design/graphs@2.1.1':
+    resolution: {integrity: sha1-1ZCFHeJKmDVqM0SpAQidN6H6+ao=, tarball: http://r.npm.sankuai.com/@ant-design/graphs/download/@ant-design/graphs-2.1.1.tgz}
+    peerDependencies:
+      react: '>=16.8.4'
+      react-dom: '>=16.8.4'
+
   '@ant-design/icons-svg@4.4.2':
     resolution: {integrity: sha1-7Svn+02CrH4dRaVKWwbWzs+L5vY=, tarball: http://r.npm.sankuai.com/@ant-design/icons-svg/download/@ant-design/icons-svg-4.4.2.tgz}
 
@@ -89,11 +116,96 @@ packages:
       react: '>=16.0.0'
       react-dom: '>=16.0.0'
 
+  '@ant-design/plots@2.6.8':
+    resolution: {integrity: sha1-57xFsY/G5Nmdxopr/FF6FxHuYkc=, tarball: http://r.npm.sankuai.com/@ant-design/plots/download/@ant-design/plots-2.6.8.tgz}
+    peerDependencies:
+      react: '>=16.8.4'
+      react-dom: '>=16.8.4'
+
   '@ant-design/react-slick@2.0.0':
     resolution: {integrity: sha1-LR2sRef8lAYDVffMIz6SyiRxM9w=, tarball: http://r.npm.sankuai.com/@ant-design/react-slick/download/@ant-design/react-slick-2.0.0.tgz}
     peerDependencies:
       react: ^0.14.0 || ^15.0.1 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^0.14.0 || ^15.0.1 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  '@antv/algorithm@0.1.26':
+    resolution: {integrity: sha1-4/Xn8djbW0FcPzHjKxGcvK/I9d4=, tarball: http://r.npm.sankuai.com/@antv/algorithm/download/@antv/algorithm-0.1.26.tgz}
+
+  '@antv/component@2.1.11':
+    resolution: {integrity: sha1-X3rl8KJPUl/dImBP4/UPDCnAgF4=, tarball: http://r.npm.sankuai.com/@antv/component/download/@antv/component-2.1.11.tgz}
+
+  '@antv/coord@0.4.7':
+    resolution: {integrity: sha1-PvbG4/nKDwJLkIiFSZRgYfNd93o=, tarball: http://r.npm.sankuai.com/@antv/coord/download/@antv/coord-0.4.7.tgz}
+
+  '@antv/event-emitter@0.1.3':
+    resolution: {integrity: sha1-PgYyO53NVaMkHdx8VFjPq9IJUWQ=, tarball: http://r.npm.sankuai.com/@antv/event-emitter/download/@antv/event-emitter-0.1.3.tgz}
+
+  '@antv/expr@1.0.2':
+    resolution: {integrity: sha1-p1+goPEy/ke+32yLk6hHmX/+U/8=, tarball: http://r.npm.sankuai.com/@antv/expr/download/@antv/expr-1.0.2.tgz}
+
+  '@antv/g-canvas@2.2.0':
+    resolution: {integrity: sha1-SEMVB2emd9WBhZVH4cfoqtXUnVQ=, tarball: http://r.npm.sankuai.com/@antv/g-canvas/download/@antv/g-canvas-2.2.0.tgz}
+
+  '@antv/g-lite@2.7.0':
+    resolution: {integrity: sha1-9OWks1N23fEd/CGmDwxKe+zzBJk=, tarball: http://r.npm.sankuai.com/@antv/g-lite/download/@antv/g-lite-2.7.0.tgz}
+
+  '@antv/g-math@3.1.0':
+    resolution: {integrity: sha1-L+5zlqNy42l2XeTX2w95PiwPlMg=, tarball: http://r.npm.sankuai.com/@antv/g-math/download/@antv/g-math-3.1.0.tgz}
+
+  '@antv/g-plugin-dragndrop@2.1.1':
+    resolution: {integrity: sha1-iBlnGd7GByL5WvF6HbRMOsjO4zQ=, tarball: http://r.npm.sankuai.com/@antv/g-plugin-dragndrop/download/@antv/g-plugin-dragndrop-2.1.1.tgz}
+
+  '@antv/g-svg@2.1.1':
+    resolution: {integrity: sha1-pCpwflG0r3MlYtiDq8EhAsInlKo=, tarball: http://r.npm.sankuai.com/@antv/g-svg/download/@antv/g-svg-2.1.1.tgz}
+
+  '@antv/g2-extension-plot@0.2.2':
+    resolution: {integrity: sha1-NGDei1odSF7fPgLS0yoNlymLD4k=, tarball: http://r.npm.sankuai.com/@antv/g2-extension-plot/download/@antv/g2-extension-plot-0.2.2.tgz}
+
+  '@antv/g2@5.4.8':
+    resolution: {integrity: sha1-xw647lVZIgTcX2dpPYZgeEI+lXQ=, tarball: http://r.npm.sankuai.com/@antv/g2/download/@antv/g2-5.4.8.tgz}
+
+  '@antv/g6-extension-react@0.2.7':
+    resolution: {integrity: sha1-ZClREFDRVFYfjd41oE8/ErstOrs=, tarball: http://r.npm.sankuai.com/@antv/g6-extension-react/download/@antv/g6-extension-react-0.2.7.tgz}
+    peerDependencies:
+      '@antv/g6': ^5.1.0
+      react: '>=16.8'
+      react-dom: '>=16.8'
+
+  '@antv/g6@5.1.0':
+    resolution: {integrity: sha1-53DqS0YqX8l5bK9k2wMO9U8R9Bo=, tarball: http://r.npm.sankuai.com/@antv/g6/download/@antv/g6-5.1.0.tgz}
+
+  '@antv/g@6.3.1':
+    resolution: {integrity: sha1-cuetXuuSCNpRUMa1MeSp0/9aaJg=, tarball: http://r.npm.sankuai.com/@antv/g/download/@antv/g-6.3.1.tgz}
+
+  '@antv/graphin@3.0.5':
+    resolution: {integrity: sha1-HmGfFiYv0WTx4NPtUdrX65Uhk7I=, tarball: http://r.npm.sankuai.com/@antv/graphin/download/@antv/graphin-3.0.5.tgz}
+    peerDependencies:
+      react: ^18.0.0 || ^19.1.0
+      react-dom: ^18.0.0 || ^19.1.0
+
+  '@antv/graphlib@2.0.4':
+    resolution: {integrity: sha1-fMQ1LJESXxo+wThSIgKG/lkFaO4=, tarball: http://r.npm.sankuai.com/@antv/graphlib/download/@antv/graphlib-2.0.4.tgz}
+
+  '@antv/hierarchy@0.7.1':
+    resolution: {integrity: sha1-CWL/o0QOtZ2yotLGAb9N5WTcH5o=, tarball: http://r.npm.sankuai.com/@antv/hierarchy/download/@antv/hierarchy-0.7.1.tgz}
+
+  '@antv/layout@2.0.0':
+    resolution: {integrity: sha1-eUm9gnYHu10C1ZekVknrXwgh4eo=, tarball: http://r.npm.sankuai.com/@antv/layout/download/@antv/layout-2.0.0.tgz}
+
+  '@antv/scale@0.4.16':
+    resolution: {integrity: sha1-YFV0cGaMz+UhfkgqAfBcDLtwa2I=, tarball: http://r.npm.sankuai.com/@antv/scale/download/@antv/scale-0.4.16.tgz}
+
+  '@antv/scale@0.5.2':
+    resolution: {integrity: sha1-O2YxuGJAiNPMNGRlADBod6VCEeY=, tarball: http://r.npm.sankuai.com/@antv/scale/download/@antv/scale-0.5.2.tgz}
+
+  '@antv/util@2.0.17':
+    resolution: {integrity: sha1-6O9CrKeJKBWyKSafPdEMazx1l6k=, tarball: http://r.npm.sankuai.com/@antv/util/download/@antv/util-2.0.17.tgz}
+
+  '@antv/util@3.3.11':
+    resolution: {integrity: sha1-MsVScxzQAO7ZrfmtYTc42kwHdkA=, tarball: http://r.npm.sankuai.com/@antv/util/download/@antv/util-3.3.11.tgz}
+
+  '@antv/vendor@1.0.11':
+    resolution: {integrity: sha1-ioeqlkQQ2fzEMadMh1cCGpQiUvI=, tarball: http://r.npm.sankuai.com/@antv/vendor/download/@antv/vendor-1.0.11.tgz}
 
   '@babel/code-frame@7.29.0':
     resolution: {integrity: sha1-fNelnxWzzA3NgDA493knEqfQsVw=, tarball: http://r.npm.sankuai.com/@babel/code-frame/download/@babel/code-frame-7.29.0.tgz}
@@ -177,6 +289,12 @@ packages:
 
   '@emotion/hash@0.8.0':
     resolution: {integrity: sha1-u7/2iXj+/b5ozLUzvIy+HRr7VBM=, tarball: http://r.npm.sankuai.com/@emotion/hash/download/@emotion/hash-0.8.0.tgz}
+
+  '@emotion/is-prop-valid@1.4.0':
+    resolution: {integrity: sha1-6a1Hrf8LXJTHLbNmnORt4z7fKMA=, tarball: http://r.npm.sankuai.com/@emotion/is-prop-valid/download/@emotion/is-prop-valid-1.4.0.tgz}
+
+  '@emotion/memoize@0.9.0':
+    resolution: {integrity: sha1-dFlp1kmXd3a0P8dkjFVqqkYrQQI=, tarball: http://r.npm.sankuai.com/@emotion/memoize/download/@emotion/memoize-0.9.0.tgz}
 
   '@emotion/unitless@0.7.5':
     resolution: {integrity: sha1-dyESkcGQCnALinjPr9oxYNdpSe0=, tarball: http://r.npm.sankuai.com/@emotion/unitless/download/@emotion/unitless-0.7.5.tgz}
@@ -652,11 +770,71 @@ packages:
   '@tybys/wasm-util@0.10.1':
     resolution: {integrity: sha1-7N3TIFzx4tUnRkn/Du3SmR7X9BQ=, tarball: http://r.npm.sankuai.com/@tybys/wasm-util/download/@tybys/wasm-util-0.10.1.tgz}
 
+  '@types/d3-array@3.2.2':
+    resolution: {integrity: sha1-4CFRRk0C1KG0RkbQ/NuT+viP3ow=, tarball: http://r.npm.sankuai.com/@types/d3-array/download/@types/d3-array-3.2.2.tgz}
+
+  '@types/d3-color@3.1.3':
+    resolution: {integrity: sha1-NoyWGhjech2oIA6AvzlD+1MTavI=, tarball: http://r.npm.sankuai.com/@types/d3-color/download/@types/d3-color-3.1.3.tgz}
+
+  '@types/d3-dispatch@3.0.7':
+    resolution: {integrity: sha1-7wBNihKARs/OQ00XGC+DTkTvlbI=, tarball: http://r.npm.sankuai.com/@types/d3-dispatch/download/@types/d3-dispatch-3.0.7.tgz}
+
+  '@types/d3-dsv@3.0.7':
+    resolution: {integrity: sha1-CjUfmW3Jmzf0+li0ksLRwE49rBc=, tarball: http://r.npm.sankuai.com/@types/d3-dsv/download/@types/d3-dsv-3.0.7.tgz}
+
+  '@types/d3-ease@3.0.2':
+    resolution: {integrity: sha1-4o2xv7+mFwdvd3DdHZpI6qO2xRs=, tarball: http://r.npm.sankuai.com/@types/d3-ease/download/@types/d3-ease-3.0.2.tgz}
+
+  '@types/d3-fetch@3.0.7':
+    resolution: {integrity: sha1-wEorTyMYGqN28wrwKD28eztWmYA=, tarball: http://r.npm.sankuai.com/@types/d3-fetch/download/@types/d3-fetch-3.0.7.tgz}
+
+  '@types/d3-force@3.0.10':
+    resolution: {integrity: sha1-bcj8bh81cE87BXCQvu63rGdL/xo=, tarball: http://r.npm.sankuai.com/@types/d3-force/download/@types/d3-force-3.0.10.tgz}
+
+  '@types/d3-format@3.0.4':
+    resolution: {integrity: sha1-seRGVkTds/3zomP+uyQKbNYW3pA=, tarball: http://r.npm.sankuai.com/@types/d3-format/download/@types/d3-format-3.0.4.tgz}
+
+  '@types/d3-geo@3.1.0':
+    resolution: {integrity: sha1-ueVqB5RJF08KLIaEqaTfP2BSJEA=, tarball: http://r.npm.sankuai.com/@types/d3-geo/download/@types/d3-geo-3.1.0.tgz}
+
+  '@types/d3-hierarchy@3.1.7':
+    resolution: {integrity: sha1-YCP7Oy1GMiny1oD5rEtHRm9x8Xs=, tarball: http://r.npm.sankuai.com/@types/d3-hierarchy/download/@types/d3-hierarchy-3.1.7.tgz}
+
+  '@types/d3-interpolate@3.0.4':
+    resolution: {integrity: sha1-QSuQ6EhwKF8v+KhGxutgNE8SpBw=, tarball: http://r.npm.sankuai.com/@types/d3-interpolate/download/@types/d3-interpolate-3.0.4.tgz}
+
+  '@types/d3-path@3.1.1':
+    resolution: {integrity: sha1-9jKzgMOsoduo40qgSbzWpK8j34o=, tarball: http://r.npm.sankuai.com/@types/d3-path/download/@types/d3-path-3.1.1.tgz}
+
+  '@types/d3-quadtree@3.0.6':
+    resolution: {integrity: sha1-1HQLD+NbHFi2bhSI9OftApUvVw8=, tarball: http://r.npm.sankuai.com/@types/d3-quadtree/download/@types/d3-quadtree-3.0.6.tgz}
+
+  '@types/d3-random@3.0.3':
+    resolution: {integrity: sha1-7ZlcceyxXgzTHiLZ1dI5QuMwDPs=, tarball: http://r.npm.sankuai.com/@types/d3-random/download/@types/d3-random-3.0.3.tgz}
+
+  '@types/d3-scale-chromatic@3.1.0':
+    resolution: {integrity: sha1-3G1Pmpg3bxjqULrWw5U38bVGPDk=, tarball: http://r.npm.sankuai.com/@types/d3-scale-chromatic/download/@types/d3-scale-chromatic-3.1.0.tgz}
+
+  '@types/d3-scale@4.0.9':
+    resolution: {integrity: sha1-V6L3ByQub+Hega17/Myq9gYXmvs=, tarball: http://r.npm.sankuai.com/@types/d3-scale/download/@types/d3-scale-4.0.9.tgz}
+
+  '@types/d3-shape@3.1.8':
+    resolution: {integrity: sha1-0VFsxQh1O+BoUs0GdY47tUoisOM=, tarball: http://r.npm.sankuai.com/@types/d3-shape/download/@types/d3-shape-3.1.8.tgz}
+
+  '@types/d3-time@3.0.4':
+    resolution: {integrity: sha1-hHL+7NY5aRRQ3YAA6zPt1EThMj8=, tarball: http://r.npm.sankuai.com/@types/d3-time/download/@types/d3-time-3.0.4.tgz}
+
+  '@types/d3-timer@3.0.2':
+    resolution: {integrity: sha1-cLvad9wjqnJ0E+IuIUr6Pw6FL3A=, tarball: http://r.npm.sankuai.com/@types/d3-timer/download/@types/d3-timer-3.0.2.tgz}
+
   '@types/esrecurse@4.3.1':
     resolution: {integrity: sha1-b2Nq+WL75hkbgwvWdrpZhpJrzOw=, tarball: http://r.npm.sankuai.com/@types/esrecurse/download/@types/esrecurse-4.3.1.tgz}
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha1-lYuRyZGxhnztMYvt6g4hXuBQcm4=, tarball: http://r.npm.sankuai.com/@types/estree/download/@types/estree-1.0.8.tgz}
+
+  '@types/geojson@7946.0.16':
+    resolution: {integrity: sha1-jr5T1p762nBERU4zBcGQF9l87So=, tarball: http://r.npm.sankuai.com/@types/geojson/download/@types/geojson-7946.0.16.tgz}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha1-WWoXRyM2lNUPatinhp/Lb1bPWEE=, tarball: http://r.npm.sankuai.com/@types/json-schema/download/@types/json-schema-7.0.15.tgz}
@@ -767,6 +945,10 @@ packages:
     resolution: {integrity: sha1-v7EGYv7tgZaixi58aOF3IMJ0F5o=, tarball: http://r.npm.sankuai.com/balanced-match/download/balanced-match-4.0.4.tgz}
     engines: {node: 18 || 20 || >=22}
 
+  base64-arraybuffer@1.0.2:
+    resolution: {integrity: sha1-HDdYmnxLB0bjS9H+uVHaLfAcG9w=, tarball: http://r.npm.sankuai.com/base64-arraybuffer/download/base64-arraybuffer-1.0.2.tgz}
+    engines: {node: '>= 0.6.0'}
+
   baseline-browser-mapping@2.10.21:
     resolution: {integrity: sha1-E2+fGB7g18puPtv0LZVZdj0sEUE=, tarball: http://r.npm.sankuai.com/baseline-browser-mapping/download/baseline-browser-mapping-2.10.21.tgz}
     engines: {node: '>=6.0.0'}
@@ -781,12 +963,28 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
 
+  bubblesets-js@2.3.4:
+    resolution: {integrity: sha1-jhIwspwwnjMnoFYw/gLfPZZZarY=, tarball: http://r.npm.sankuai.com/bubblesets-js/download/bubblesets-js-2.3.4.tgz}
+
   caniuse-lite@1.0.30001790:
     resolution: {integrity: sha1-BGYMfeFfRF2G3RCsiKiTasBpjkU=, tarball: http://r.npm.sankuai.com/caniuse-lite/download/caniuse-lite-1.0.30001790.tgz}
 
   clsx@2.1.1:
     resolution: {integrity: sha1-7tOXyf2L2IK/sY3qtxAgSaLzKZk=, tarball: http://r.npm.sankuai.com/clsx/download/clsx-2.1.1.tgz}
     engines: {node: '>=6'}
+
+  color-name@1.1.4:
+    resolution: {integrity: sha1-wqCah6y95pVD3m9j+jmVyCbFNqI=, tarball: http://r.npm.sankuai.com/color-name/download/color-name-1.1.4.tgz}
+
+  color-string@1.9.1:
+    resolution: {integrity: sha1-RGf5FG8Db4Vbdk37W/hYK/NCx6Q=, tarball: http://r.npm.sankuai.com/color-string/download/color-string-1.9.1.tgz}
+
+  comlink@4.4.2:
+    resolution: {integrity: sha1-y7zYJ0L768BkicKKGD7txcYKK8o=, tarball: http://r.npm.sankuai.com/comlink/download/comlink-4.4.2.tgz}
+
+  commander@7.2.0:
+    resolution: {integrity: sha1-o2y1fQtQHOEI5NIFWaFQo5HZerc=, tarball: http://r.npm.sankuai.com/commander/download/commander-7.2.0.tgz}
+    engines: {node: '>= 10'}
 
   compute-scroll-into-view@3.1.1:
     resolution: {integrity: sha1-AsM4bsUx+2qYgZZziOU+hWTz6ao=, tarball: http://r.npm.sankuai.com/compute-scroll-into-view/download/compute-scroll-into-view-3.1.1.tgz}
@@ -798,8 +996,113 @@ packages:
     resolution: {integrity: sha1-ilj+ePANzXDDcEUXWd+/rwPo7p8=, tarball: http://r.npm.sankuai.com/cross-spawn/download/cross-spawn-7.0.6.tgz}
     engines: {node: '>= 8'}
 
+  css-line-break@2.1.0:
+    resolution: {integrity: sha1-v+9mDfpvU5fqVBFrs8tIc+28T6A=, tarball: http://r.npm.sankuai.com/css-line-break/download/css-line-break-2.1.0.tgz}
+
   csstype@3.2.3:
     resolution: {integrity: sha1-7EjA8+mT5QZIyG2lWeJhCZXPmJo=, tarball: http://r.npm.sankuai.com/csstype/download/csstype-3.2.3.tgz}
+
+  d3-array@3.2.4:
+    resolution: {integrity: sha1-Ff7DOyN/l6xdfJhtx32ic6jtC7U=, tarball: http://r.npm.sankuai.com/d3-array/download/d3-array-3.2.4.tgz}
+    engines: {node: '>=12'}
+
+  d3-binarytree@1.0.2:
+    resolution: {integrity: sha1-7UPrwTxw+6v91i3xdIC8WkJXU8w=, tarball: http://r.npm.sankuai.com/d3-binarytree/download/d3-binarytree-1.0.2.tgz}
+
+  d3-color@3.1.0:
+    resolution: {integrity: sha1-OVsoM9+scVB/EqwvevI7+BneJOI=, tarball: http://r.npm.sankuai.com/d3-color/download/d3-color-3.1.0.tgz}
+    engines: {node: '>=12'}
+
+  d3-dispatch@3.0.1:
+    resolution: {integrity: sha1-X8dShOnCN1w2yDlBGgz1UMv8TV4=, tarball: http://r.npm.sankuai.com/d3-dispatch/download/d3-dispatch-3.0.1.tgz}
+    engines: {node: '>=12'}
+
+  d3-dsv@3.0.1:
+    resolution: {integrity: sha1-xjr5ePTWoNCEpSpnOSK+IWB4m3M=, tarball: http://r.npm.sankuai.com/d3-dsv/download/d3-dsv-3.0.1.tgz}
+    engines: {node: '>=12'}
+    hasBin: true
+
+  d3-ease@3.0.1:
+    resolution: {integrity: sha1-llisOKIUDVnTRhYPH2ww/aC9EvQ=, tarball: http://r.npm.sankuai.com/d3-ease/download/d3-ease-3.0.1.tgz}
+    engines: {node: '>=12'}
+
+  d3-fetch@3.0.1:
+    resolution: {integrity: sha1-gxQb/5hWoO21443onNz+Y9CmCiI=, tarball: http://r.npm.sankuai.com/d3-fetch/download/d3-fetch-3.0.1.tgz}
+    engines: {node: '>=12'}
+
+  d3-force-3d@3.0.6:
+    resolution: {integrity: sha1-fqTCbXk3uCmTvZRE9XDtUvZh1Ko=, tarball: http://r.npm.sankuai.com/d3-force-3d/download/d3-force-3d-3.0.6.tgz}
+    engines: {node: '>=12'}
+
+  d3-force@3.0.0:
+    resolution: {integrity: sha1-Piuhph5wiI/j2RlOMNbRTuzhVcQ=, tarball: http://r.npm.sankuai.com/d3-force/download/d3-force-3.0.0.tgz}
+    engines: {node: '>=12'}
+
+  d3-format@3.1.2:
+    resolution: {integrity: sha1-Af20a1i+sfVbELQq1wtuNE1esq4=, tarball: http://r.npm.sankuai.com/d3-format/download/d3-format-3.1.2.tgz}
+    engines: {node: '>=12'}
+
+  d3-geo-projection@4.0.0:
+    resolution: {integrity: sha1-3CKeXq140xhppOh88fRb0nFsSMo=, tarball: http://r.npm.sankuai.com/d3-geo-projection/download/d3-geo-projection-4.0.0.tgz}
+    engines: {node: '>=12'}
+    hasBin: true
+
+  d3-geo@3.1.1:
+    resolution: {integrity: sha1-YCfPUSRvmy69ZPmeAdx8M2QDOk0=, tarball: http://r.npm.sankuai.com/d3-geo/download/d3-geo-3.1.1.tgz}
+    engines: {node: '>=12'}
+
+  d3-hierarchy@3.1.2:
+    resolution: {integrity: sha1-sBzULB7tPUbbd6WWbPcm+MCRYMY=, tarball: http://r.npm.sankuai.com/d3-hierarchy/download/d3-hierarchy-3.1.2.tgz}
+    engines: {node: '>=12'}
+
+  d3-interpolate@3.0.1:
+    resolution: {integrity: sha1-PEeqWzLFs9+1bvP9Q0IHimMrQA0=, tarball: http://r.npm.sankuai.com/d3-interpolate/download/d3-interpolate-3.0.1.tgz}
+    engines: {node: '>=12'}
+
+  d3-octree@1.1.0:
+    resolution: {integrity: sha1-8H41O3bfhyZE5xMKsadMXvL0KH4=, tarball: http://r.npm.sankuai.com/d3-octree/download/d3-octree-1.1.0.tgz}
+
+  d3-path@3.1.0:
+    resolution: {integrity: sha1-It+TkDL7WnGuixgA1h3beFHEJSY=, tarball: http://r.npm.sankuai.com/d3-path/download/d3-path-3.1.0.tgz}
+    engines: {node: '>=12'}
+
+  d3-quadtree@3.0.1:
+    resolution: {integrity: sha1-bco+i+Kzk8mp1RTau9gKkt7vGk8=, tarball: http://r.npm.sankuai.com/d3-quadtree/download/d3-quadtree-3.0.1.tgz}
+    engines: {node: '>=12'}
+
+  d3-random@3.0.1:
+    resolution: {integrity: sha1-1JJjeNMz2cC/0eb6AZTTCuuqIPQ=, tarball: http://r.npm.sankuai.com/d3-random/download/d3-random-3.0.1.tgz}
+    engines: {node: '>=12'}
+
+  d3-regression@1.3.10:
+    resolution: {integrity: sha1-0aQRq0UETZ6NW4rsBfLlmOGmIck=, tarball: http://r.npm.sankuai.com/d3-regression/download/d3-regression-1.3.10.tgz}
+
+  d3-scale-chromatic@3.1.0:
+    resolution: {integrity: sha1-NMOdopiyPCDgLxpLI5vQ8i5/ExQ=, tarball: http://r.npm.sankuai.com/d3-scale-chromatic/download/d3-scale-chromatic-3.1.0.tgz}
+    engines: {node: '>=12'}
+
+  d3-scale@4.0.2:
+    resolution: {integrity: sha1-grOOjo/3CAdk+Nzsd71L45Nok5Y=, tarball: http://r.npm.sankuai.com/d3-scale/download/d3-scale-4.0.2.tgz}
+    engines: {node: '>=12'}
+
+  d3-shape@3.2.0:
+    resolution: {integrity: sha1-oag5y9m6RfKGdMadf4Vbz5HfxqU=, tarball: http://r.npm.sankuai.com/d3-shape/download/d3-shape-3.2.0.tgz}
+    engines: {node: '>=12'}
+
+  d3-time-format@4.1.0:
+    resolution: {integrity: sha1-erUlelBB0R7LT+cKXH0WoZW7QIo=, tarball: http://r.npm.sankuai.com/d3-time-format/download/d3-time-format-4.1.0.tgz}
+    engines: {node: '>=12'}
+
+  d3-time@3.1.0:
+    resolution: {integrity: sha1-kxDbVumS48AXXh7zheVF5Iqbtcc=, tarball: http://r.npm.sankuai.com/d3-time/download/d3-time-3.1.0.tgz}
+    engines: {node: '>=12'}
+
+  d3-timer@3.0.1:
+    resolution: {integrity: sha1-YoTSonCChbGrt+IB7aQ4CvNeY7A=, tarball: http://r.npm.sankuai.com/d3-timer/download/d3-timer-3.0.1.tgz}
+    engines: {node: '>=12'}
+
+  dagre@0.8.5:
+    resolution: {integrity: sha1-ujCwBV2sErbB/MJHgXRCd30Gr+4=, tarball: http://r.npm.sankuai.com/dagre/download/dagre-0.8.5.tgz}
 
   dayjs@1.11.20:
     resolution: {integrity: sha1-iNkZ/WOdyZFBXaX0y28bZlCBGTg=, tarball: http://r.npm.sankuai.com/dayjs/download/dayjs-1.11.20.tgz}
@@ -884,6 +1187,9 @@ packages:
     resolution: {integrity: sha1-dNLrTeC42hKTcRkQ1Qd1ubcQ72Q=, tarball: http://r.npm.sankuai.com/esutils/download/esutils-2.0.3.tgz}
     engines: {node: '>=0.10.0'}
 
+  eventemitter3@5.0.4:
+    resolution: {integrity: sha1-qG1mFwQzcS3egUcHrFK1JxzrH+s=, tarball: http://r.npm.sankuai.com/eventemitter3/download/eventemitter3-5.0.4.tgz}
+
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha1-On1WtVnWy8PrUSMlJE5hmmXGxSU=, tarball: http://r.npm.sankuai.com/fast-deep-equal/download/fast-deep-equal-3.1.3.tgz}
 
@@ -902,6 +1208,9 @@ packages:
       picomatch:
         optional: true
 
+  fecha@4.2.3:
+    resolution: {integrity: sha1-TZzNvGHoYpsln9ymfmWJFEjVaf0=, tarball: http://r.npm.sankuai.com/fecha/download/fecha-4.2.3.tgz}
+
   file-entry-cache@8.0.0:
     resolution: {integrity: sha1-d4e93PETG/+5JjbGlFe7wO3W2B8=, tarball: http://r.npm.sankuai.com/file-entry-cache/download/file-entry-cache-8.0.0.tgz}
     engines: {node: '>=16.0.0'}
@@ -917,6 +1226,10 @@ packages:
   flatted@3.4.2:
     resolution: {integrity: sha1-9cI8EH8PN96NvfJPE3IrO5jVJyY=, tarball: http://r.npm.sankuai.com/flatted/download/flatted-3.4.2.tgz}
 
+  flru@1.0.2:
+    resolution: {integrity: sha1-GuUUxiuLA1//+cqeRWPdzIF/SEU=, tarball: http://r.npm.sankuai.com/flru/download/flru-1.0.2.tgz}
+    engines: {node: '>=6'}
+
   fsevents@2.3.3:
     resolution: {integrity: sha1-ysZAd4XQNnWipeGlMFxpezR9kNY=, tarball: http://r.npm.sankuai.com/fsevents/download/fsevents-2.3.3.tgz}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -926,6 +1239,9 @@ packages:
     resolution: {integrity: sha1-MqbudsPX9S1GsrGuXZP+qFgKJeA=, tarball: http://r.npm.sankuai.com/gensync/download/gensync-1.0.0-beta.2.tgz}
     engines: {node: '>=6.9.0'}
 
+  gl-matrix@3.4.4:
+    resolution: {integrity: sha1-d4nuSYL2LHp69EfuSI871rDHcAM=, tarball: http://r.npm.sankuai.com/gl-matrix/download/gl-matrix-3.4.4.tgz}
+
   glob-parent@6.0.2:
     resolution: {integrity: sha1-bSN9mQg5UMeSkPJMdkKj3poo+eM=, tarball: http://r.npm.sankuai.com/glob-parent/download/glob-parent-6.0.2.tgz}
     engines: {node: '>=10.13.0'}
@@ -934,11 +1250,22 @@ packages:
     resolution: {integrity: sha1-qCxkHYmPjfvg6B9m/f99DeQ/iMY=, tarball: http://r.npm.sankuai.com/globals/download/globals-17.5.0.tgz}
     engines: {node: '>=18'}
 
+  graphlib@2.1.8:
+    resolution: {integrity: sha1-V2HUFHN4cAhMkux7XbywWSydNdo=, tarball: http://r.npm.sankuai.com/graphlib/download/graphlib-2.1.8.tgz}
+
   hermes-estree@0.25.1:
     resolution: {integrity: sha1-au7BfRmDtOq/aXIfOqPrcFsX9IA=, tarball: http://r.npm.sankuai.com/hermes-estree/download/hermes-estree-0.25.1.tgz}
 
   hermes-parser@0.25.1:
     resolution: {integrity: sha1-W+Dkh7IJCIbGK9ihFyTNdm1fVNE=, tarball: http://r.npm.sankuai.com/hermes-parser/download/hermes-parser-0.25.1.tgz}
+
+  html2canvas@1.4.1:
+    resolution: {integrity: sha1-fO8YiDEbUBHVB3lKBmBBsUZppUM=, tarball: http://r.npm.sankuai.com/html2canvas/download/html2canvas-1.4.1.tgz}
+    engines: {node: '>=8.0.0'}
+
+  iconv-lite@0.6.3:
+    resolution: {integrity: sha1-pS+AvzjaGVLrXGgXkHGYcaGnJQE=, tarball: http://r.npm.sankuai.com/iconv-lite/download/iconv-lite-0.6.3.tgz}
+    engines: {node: '>=0.10.0'}
 
   ignore@5.3.2:
     resolution: {integrity: sha1-PNQOcp82Q/2HywTlC/DrcivFlvU=, tarball: http://r.npm.sankuai.com/ignore/download/ignore-5.3.2.tgz}
@@ -951,6 +1278,16 @@ packages:
   imurmurhash@0.1.4:
     resolution: {integrity: sha1-khi5srkoojixPcT7a21XbyMUU+o=, tarball: http://r.npm.sankuai.com/imurmurhash/download/imurmurhash-0.1.4.tgz}
     engines: {node: '>=0.8.19'}
+
+  internmap@2.0.3:
+    resolution: {integrity: sha1-ZoXyN1XkPFJOJR0py8lySOMGEAk=, tarball: http://r.npm.sankuai.com/internmap/download/internmap-2.0.3.tgz}
+    engines: {node: '>=12'}
+
+  is-any-array@3.0.0:
+    resolution: {integrity: sha1-GTZNe9iIrWx5zhablJptS9n0Ty0=, tarball: http://r.npm.sankuai.com/is-any-array/download/is-any-array-3.0.0.tgz}
+
+  is-arrayish@0.3.4:
+    resolution: {integrity: sha1-HuVVOBhRGRVoXTO7E9Mb+FTlBZ0=, tarball: http://r.npm.sankuai.com/is-arrayish/download/is-arrayish-0.3.4.tgz}
 
   is-extglob@2.1.1:
     resolution: {integrity: sha1-qIwCU1eR8C7TfHahueqXc8gz+MI=, tarball: http://r.npm.sankuai.com/is-extglob/download/is-extglob-2.1.1.tgz}
@@ -1076,12 +1413,27 @@ packages:
     resolution: {integrity: sha1-VTIeswn+u8WcSAHZMackUqaB0oY=, tarball: http://r.npm.sankuai.com/locate-path/download/locate-path-6.0.0.tgz}
     engines: {node: '>=10'}
 
+  lodash@4.18.1:
+    resolution: {integrity: sha1-/ytmwfYybVlRPeJAe/iBQ5gSdxw=, tarball: http://r.npm.sankuai.com/lodash/download/lodash-4.18.1.tgz}
+
   lru-cache@5.1.1:
     resolution: {integrity: sha1-HaJ+ZxAnGUdpXa9oSOhH8B2EuSA=, tarball: http://r.npm.sankuai.com/lru-cache/download/lru-cache-5.1.1.tgz}
 
   minimatch@10.2.5:
     resolution: {integrity: sha1-vUhoegvjjtKWE5kQVgD4MglYYdE=, tarball: http://r.npm.sankuai.com/minimatch/download/minimatch-10.2.5.tgz}
     engines: {node: 18 || 20 || >=22}
+
+  ml-array-max@2.0.0:
+    resolution: {integrity: sha1-Jjzm83HYDDeRSUGn1OQTuDxctyI=, tarball: http://r.npm.sankuai.com/ml-array-max/download/ml-array-max-2.0.0.tgz}
+
+  ml-array-min@2.0.0:
+    resolution: {integrity: sha1-0yaOYtzYYH13/Z1EifztFRx2MR8=, tarball: http://r.npm.sankuai.com/ml-array-min/download/ml-array-min-2.0.0.tgz}
+
+  ml-array-rescale@2.0.0:
+    resolution: {integrity: sha1-b8qjAQhjp+rDObtgcmGLp/oX7v4=, tarball: http://r.npm.sankuai.com/ml-array-rescale/download/ml-array-rescale-2.0.0.tgz}
+
+  ml-matrix@6.12.2:
+    resolution: {integrity: sha1-9+aziIOPvLxD/NrxhMj1UCn0ZtY=, tarball: http://r.npm.sankuai.com/ml-matrix/download/ml-matrix-6.12.2.tgz}
 
   ms@2.1.3:
     resolution: {integrity: sha1-V0yBOM4dK1hh8LRFedut1gxmFbI=, tarball: http://r.npm.sankuai.com/ms/download/ms-2.1.3.tgz}
@@ -1116,6 +1468,9 @@ packages:
   path-key@3.1.1:
     resolution: {integrity: sha1-WB9q3mWMu6ZaDTOA3ndTKVBU83U=, tarball: http://r.npm.sankuai.com/path-key/download/path-key-3.1.1.tgz}
     engines: {node: '>=8'}
+
+  pdfast@0.2.0:
+    resolution: {integrity: sha1-jLxVbhvyUiF3eHwN4uDUNzuohck=, tarball: http://r.npm.sankuai.com/pdfast/download/pdfast-0.2.0.tgz}
 
   picocolors@1.1.1:
     resolution: {integrity: sha1-PTIa8+q5ObCDyPkpodEs2oHCa2s=, tarball: http://r.npm.sankuai.com/picocolors/download/picocolors-1.1.1.tgz}
@@ -1153,6 +1508,12 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
 
+  rw@1.3.3:
+    resolution: {integrity: sha1-P4Yt+pGrdmsUiF700BEkv9oHT7Q=, tarball: http://r.npm.sankuai.com/rw/download/rw-1.3.3.tgz}
+
+  safer-buffer@2.1.2:
+    resolution: {integrity: sha1-RPoWGwGHuVSd2Eu5GAL5vYOFzWo=, tarball: http://r.npm.sankuai.com/safer-buffer/download/safer-buffer-2.1.2.tgz}
+
   scheduler@0.27.0:
     resolution: {integrity: sha1-DE74LWfR5cHjWej8dtOofwRf5b0=, tarball: http://r.npm.sankuai.com/scheduler/download/scheduler-0.27.0.tgz}
 
@@ -1176,6 +1537,9 @@ packages:
     resolution: {integrity: sha1-rhbxZE2HPsrYQ7AwexQzYtTEIXI=, tarball: http://r.npm.sankuai.com/shebang-regex/download/shebang-regex-3.0.0.tgz}
     engines: {node: '>=8'}
 
+  simple-swizzle@0.2.4:
+    resolution: {integrity: sha1-qNEaRaEWANah7N/2NjMp42SMNmc=, tarball: http://r.npm.sankuai.com/simple-swizzle/download/simple-swizzle-0.2.4.tgz}
+
   source-map-js@1.2.1:
     resolution: {integrity: sha1-HOVlD93YerwJnto33P8CTCZnrkY=, tarball: http://r.npm.sankuai.com/source-map-js/download/source-map-js-1.2.1.tgz}
     engines: {node: '>=0.10.0'}
@@ -1183,8 +1547,30 @@ packages:
   string-convert@0.2.1:
     resolution: {integrity: sha1-aYLMMEn7tM2F+LJFaLnZvznu/5c=, tarball: http://r.npm.sankuai.com/string-convert/download/string-convert-0.2.1.tgz}
 
+  styled-components@6.4.1:
+    resolution: {integrity: sha1-W0TA2RQKKEWOupMfUyU2E6mevjA=, tarball: http://r.npm.sankuai.com/styled-components/download/styled-components-6.4.1.tgz}
+    engines: {node: '>= 16'}
+    peerDependencies:
+      css-to-react-native: '>= 3.2.0'
+      react: '>= 16.8.0'
+      react-dom: '>= 16.8.0'
+      react-native: '>= 0.68.0'
+    peerDependenciesMeta:
+      css-to-react-native:
+        optional: true
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+
   stylis@4.3.6:
     resolution: {integrity: sha1-fHuXGRy08ZXwPsq31S95Au03gyA=, tarball: http://r.npm.sankuai.com/stylis/download/stylis-4.3.6.tgz}
+
+  svg-path-parser@1.1.0:
+    resolution: {integrity: sha1-4WtLOd8NKw056DR9t5/doUU6YEY=, tarball: http://r.npm.sankuai.com/svg-path-parser/download/svg-path-parser-1.1.0.tgz}
+
+  text-segmentation@1.0.3:
+    resolution: {integrity: sha1-UqOIFZ7//nRrJKY7oxG2rJ8teUM=, tarball: http://r.npm.sankuai.com/text-segmentation/download/text-segmentation-1.0.3.tgz}
 
   throttle-debounce@5.0.2:
     resolution: {integrity: sha1-7FVJ2E4FPwQ8n9Dypt2JL/hEVrE=, tarball: http://r.npm.sankuai.com/throttle-debounce/download/throttle-debounce-5.0.2.tgz}
@@ -1230,6 +1616,9 @@ packages:
 
   uri-js@4.4.1:
     resolution: {integrity: sha1-mxpSWVIlhZ5V9mnZKPiMbFfyp34=, tarball: http://r.npm.sankuai.com/uri-js/download/uri-js-4.4.1.tgz}
+
+  utrie@1.0.2:
+    resolution: {integrity: sha1-1C/kTem8ARnCXef1ZKbtGyyHpkU=, tarball: http://r.npm.sankuai.com/utrie/download/utrie-1.0.2.tgz}
 
   vite@8.0.9:
     resolution: {integrity: sha1-aWAjKevOofKBEkc1oRE75RxF0do=, tarball: http://r.npm.sankuai.com/vite/download/vite-8.0.9.tgz}
@@ -1301,6 +1690,29 @@ packages:
 
 snapshots:
 
+  '@ant-design/charts-util@0.0.1-alpha.7(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      lodash: 4.18.1
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+
+  '@ant-design/charts-util@0.0.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      lodash: 4.18.1
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+
+  '@ant-design/charts@2.6.7(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      '@ant-design/graphs': 2.1.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@ant-design/plots': 2.6.8(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      lodash: 4.18.1
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+    transitivePeerDependencies:
+      - css-to-react-native
+      - react-native
+
   '@ant-design/colors@8.0.1':
     dependencies:
       '@ant-design/fast-color': 3.0.1
@@ -1327,6 +1739,20 @@ snapshots:
 
   '@ant-design/fast-color@3.0.1': {}
 
+  '@ant-design/graphs@2.1.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      '@ant-design/charts-util': 0.0.1-alpha.7(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@antv/g6': 5.1.0
+      '@antv/g6-extension-react': 0.2.7(@antv/g6@5.1.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@antv/graphin': 3.0.5(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      lodash: 4.18.1
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+      styled-components: 6.4.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+    transitivePeerDependencies:
+      - css-to-react-native
+      - react-native
+
   '@ant-design/icons-svg@4.4.2': {}
 
   '@ant-design/icons@6.1.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
@@ -1338,6 +1764,17 @@ snapshots:
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
 
+  '@ant-design/plots@2.6.8(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      '@ant-design/charts-util': 0.0.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@antv/event-emitter': 0.1.3
+      '@antv/g': 6.3.1
+      '@antv/g2': 5.4.8
+      '@antv/g2-extension-plot': 0.2.2
+      lodash: 4.18.1
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+
   '@ant-design/react-slick@2.0.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@babel/runtime': 7.29.2
@@ -1346,6 +1783,214 @@ snapshots:
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
       throttle-debounce: 5.0.2
+
+  '@antv/algorithm@0.1.26':
+    dependencies:
+      '@antv/util': 2.0.17
+      tslib: 2.8.1
+
+  '@antv/component@2.1.11':
+    dependencies:
+      '@antv/g': 6.3.1
+      '@antv/scale': 0.4.16
+      '@antv/util': 3.3.11
+      svg-path-parser: 1.1.0
+
+  '@antv/coord@0.4.7':
+    dependencies:
+      '@antv/scale': 0.4.16
+      '@antv/util': 2.0.17
+      gl-matrix: 3.4.4
+
+  '@antv/event-emitter@0.1.3': {}
+
+  '@antv/expr@1.0.2': {}
+
+  '@antv/g-canvas@2.2.0':
+    dependencies:
+      '@antv/g-lite': 2.7.0
+      '@antv/g-math': 3.1.0
+      '@antv/util': 3.3.11
+      '@babel/runtime': 7.29.2
+      gl-matrix: 3.4.4
+      tslib: 2.8.1
+
+  '@antv/g-lite@2.7.0':
+    dependencies:
+      '@antv/g-math': 3.1.0
+      '@antv/util': 3.3.11
+      '@antv/vendor': 1.0.11
+      '@babel/runtime': 7.29.2
+      eventemitter3: 5.0.4
+      gl-matrix: 3.4.4
+      tslib: 2.8.1
+
+  '@antv/g-math@3.1.0':
+    dependencies:
+      '@antv/util': 3.3.11
+      '@babel/runtime': 7.29.2
+      gl-matrix: 3.4.4
+      tslib: 2.8.1
+
+  '@antv/g-plugin-dragndrop@2.1.1':
+    dependencies:
+      '@antv/g-lite': 2.7.0
+      '@antv/util': 3.3.11
+      '@babel/runtime': 7.29.2
+      tslib: 2.8.1
+
+  '@antv/g-svg@2.1.1':
+    dependencies:
+      '@antv/g-lite': 2.7.0
+      '@antv/util': 3.3.11
+      '@babel/runtime': 7.29.2
+      gl-matrix: 3.4.4
+      tslib: 2.8.1
+
+  '@antv/g2-extension-plot@0.2.2':
+    dependencies:
+      '@antv/g2': 5.4.8
+      '@antv/util': 3.3.11
+      '@antv/vendor': 1.0.11
+
+  '@antv/g2@5.4.8':
+    dependencies:
+      '@antv/component': 2.1.11
+      '@antv/coord': 0.4.7
+      '@antv/event-emitter': 0.1.3
+      '@antv/expr': 1.0.2
+      '@antv/g': 6.3.1
+      '@antv/g-canvas': 2.2.0
+      '@antv/g-plugin-dragndrop': 2.1.1
+      '@antv/scale': 0.5.2
+      '@antv/util': 3.3.11
+      '@antv/vendor': 1.0.11
+      flru: 1.0.2
+      pdfast: 0.2.0
+
+  '@antv/g6-extension-react@0.2.7(@antv/g6@5.1.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      '@antv/g': 6.3.1
+      '@antv/g-svg': 2.1.1
+      '@antv/g6': 5.1.0
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+
+  '@antv/g6@5.1.0':
+    dependencies:
+      '@antv/algorithm': 0.1.26
+      '@antv/component': 2.1.11
+      '@antv/event-emitter': 0.1.3
+      '@antv/g': 6.3.1
+      '@antv/g-canvas': 2.2.0
+      '@antv/g-plugin-dragndrop': 2.1.1
+      '@antv/graphlib': 2.0.4
+      '@antv/hierarchy': 0.7.1
+      '@antv/layout': 2.0.0
+      '@antv/util': 3.3.11
+      bubblesets-js: 2.3.4
+
+  '@antv/g@6.3.1':
+    dependencies:
+      '@antv/g-lite': 2.7.0
+      '@antv/util': 3.3.11
+      '@babel/runtime': 7.29.2
+      gl-matrix: 3.4.4
+      html2canvas: 1.4.1
+
+  '@antv/graphin@3.0.5(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      '@antv/g6': 5.1.0
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+
+  '@antv/graphlib@2.0.4':
+    dependencies:
+      '@antv/event-emitter': 0.1.3
+
+  '@antv/hierarchy@0.7.1': {}
+
+  '@antv/layout@2.0.0':
+    dependencies:
+      '@antv/event-emitter': 0.1.3
+      '@antv/expr': 1.0.2
+      '@antv/graphlib': 2.0.4
+      '@antv/util': 3.3.11
+      comlink: 4.4.2
+      d3-force: 3.0.0
+      d3-force-3d: 3.0.6
+      d3-octree: 1.1.0
+      d3-quadtree: 3.0.1
+      dagre: 0.8.5
+      ml-matrix: 6.12.2
+      tslib: 2.8.1
+
+  '@antv/scale@0.4.16':
+    dependencies:
+      '@antv/util': 3.3.11
+      color-string: 1.9.1
+      fecha: 4.2.3
+
+  '@antv/scale@0.5.2':
+    dependencies:
+      '@antv/util': 3.3.11
+      color-string: 1.9.1
+      fecha: 4.2.3
+
+  '@antv/util@2.0.17':
+    dependencies:
+      csstype: 3.2.3
+      tslib: 2.8.1
+
+  '@antv/util@3.3.11':
+    dependencies:
+      fast-deep-equal: 3.1.3
+      gl-matrix: 3.4.4
+      tslib: 2.8.1
+
+  '@antv/vendor@1.0.11':
+    dependencies:
+      '@types/d3-array': 3.2.2
+      '@types/d3-color': 3.1.3
+      '@types/d3-dispatch': 3.0.7
+      '@types/d3-dsv': 3.0.7
+      '@types/d3-ease': 3.0.2
+      '@types/d3-fetch': 3.0.7
+      '@types/d3-force': 3.0.10
+      '@types/d3-format': 3.0.4
+      '@types/d3-geo': 3.1.0
+      '@types/d3-hierarchy': 3.1.7
+      '@types/d3-interpolate': 3.0.4
+      '@types/d3-path': 3.1.1
+      '@types/d3-quadtree': 3.0.6
+      '@types/d3-random': 3.0.3
+      '@types/d3-scale': 4.0.9
+      '@types/d3-scale-chromatic': 3.1.0
+      '@types/d3-shape': 3.1.8
+      '@types/d3-time': 3.0.4
+      '@types/d3-timer': 3.0.2
+      d3-array: 3.2.4
+      d3-color: 3.1.0
+      d3-dispatch: 3.0.1
+      d3-dsv: 3.0.1
+      d3-ease: 3.0.1
+      d3-fetch: 3.0.1
+      d3-force: 3.0.0
+      d3-force-3d: 3.0.6
+      d3-format: 3.1.2
+      d3-geo: 3.1.1
+      d3-geo-projection: 4.0.0
+      d3-hierarchy: 3.1.2
+      d3-interpolate: 3.0.1
+      d3-path: 3.1.0
+      d3-quadtree: 3.0.1
+      d3-random: 3.0.1
+      d3-regression: 1.3.10
+      d3-scale: 4.0.2
+      d3-scale-chromatic: 3.1.0
+      d3-shape: 3.2.0
+      d3-time: 3.1.0
+      d3-timer: 3.0.1
 
   '@babel/code-frame@7.29.0':
     dependencies:
@@ -1466,6 +2111,12 @@ snapshots:
     optional: true
 
   '@emotion/hash@0.8.0': {}
+
+  '@emotion/is-prop-valid@1.4.0':
+    dependencies:
+      '@emotion/memoize': 0.9.0
+
+  '@emotion/memoize@0.9.0': {}
 
   '@emotion/unitless@0.7.5': {}
 
@@ -1951,9 +2602,59 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
+  '@types/d3-array@3.2.2': {}
+
+  '@types/d3-color@3.1.3': {}
+
+  '@types/d3-dispatch@3.0.7': {}
+
+  '@types/d3-dsv@3.0.7': {}
+
+  '@types/d3-ease@3.0.2': {}
+
+  '@types/d3-fetch@3.0.7':
+    dependencies:
+      '@types/d3-dsv': 3.0.7
+
+  '@types/d3-force@3.0.10': {}
+
+  '@types/d3-format@3.0.4': {}
+
+  '@types/d3-geo@3.1.0':
+    dependencies:
+      '@types/geojson': 7946.0.16
+
+  '@types/d3-hierarchy@3.1.7': {}
+
+  '@types/d3-interpolate@3.0.4':
+    dependencies:
+      '@types/d3-color': 3.1.3
+
+  '@types/d3-path@3.1.1': {}
+
+  '@types/d3-quadtree@3.0.6': {}
+
+  '@types/d3-random@3.0.3': {}
+
+  '@types/d3-scale-chromatic@3.1.0': {}
+
+  '@types/d3-scale@4.0.9':
+    dependencies:
+      '@types/d3-time': 3.0.4
+
+  '@types/d3-shape@3.1.8':
+    dependencies:
+      '@types/d3-path': 3.1.1
+
+  '@types/d3-time@3.0.4': {}
+
+  '@types/d3-timer@3.0.2': {}
+
   '@types/esrecurse@4.3.1': {}
 
   '@types/estree@1.0.8': {}
+
+  '@types/geojson@7946.0.16': {}
 
   '@types/json-schema@7.0.15': {}
 
@@ -2137,6 +2838,8 @@ snapshots:
 
   balanced-match@4.0.4: {}
 
+  base64-arraybuffer@1.0.2: {}
+
   baseline-browser-mapping@2.10.21: {}
 
   brace-expansion@5.0.5:
@@ -2151,9 +2854,22 @@ snapshots:
       node-releases: 2.0.38
       update-browserslist-db: 1.2.3(browserslist@4.28.2)
 
+  bubblesets-js@2.3.4: {}
+
   caniuse-lite@1.0.30001790: {}
 
   clsx@2.1.1: {}
+
+  color-name@1.1.4: {}
+
+  color-string@1.9.1:
+    dependencies:
+      color-name: 1.1.4
+      simple-swizzle: 0.2.4
+
+  comlink@4.4.2: {}
+
+  commander@7.2.0: {}
 
   compute-scroll-into-view@3.1.1: {}
 
@@ -2165,7 +2881,107 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
+  css-line-break@2.1.0:
+    dependencies:
+      utrie: 1.0.2
+
   csstype@3.2.3: {}
+
+  d3-array@3.2.4:
+    dependencies:
+      internmap: 2.0.3
+
+  d3-binarytree@1.0.2: {}
+
+  d3-color@3.1.0: {}
+
+  d3-dispatch@3.0.1: {}
+
+  d3-dsv@3.0.1:
+    dependencies:
+      commander: 7.2.0
+      iconv-lite: 0.6.3
+      rw: 1.3.3
+
+  d3-ease@3.0.1: {}
+
+  d3-fetch@3.0.1:
+    dependencies:
+      d3-dsv: 3.0.1
+
+  d3-force-3d@3.0.6:
+    dependencies:
+      d3-binarytree: 1.0.2
+      d3-dispatch: 3.0.1
+      d3-octree: 1.1.0
+      d3-quadtree: 3.0.1
+      d3-timer: 3.0.1
+
+  d3-force@3.0.0:
+    dependencies:
+      d3-dispatch: 3.0.1
+      d3-quadtree: 3.0.1
+      d3-timer: 3.0.1
+
+  d3-format@3.1.2: {}
+
+  d3-geo-projection@4.0.0:
+    dependencies:
+      commander: 7.2.0
+      d3-array: 3.2.4
+      d3-geo: 3.1.1
+
+  d3-geo@3.1.1:
+    dependencies:
+      d3-array: 3.2.4
+
+  d3-hierarchy@3.1.2: {}
+
+  d3-interpolate@3.0.1:
+    dependencies:
+      d3-color: 3.1.0
+
+  d3-octree@1.1.0: {}
+
+  d3-path@3.1.0: {}
+
+  d3-quadtree@3.0.1: {}
+
+  d3-random@3.0.1: {}
+
+  d3-regression@1.3.10: {}
+
+  d3-scale-chromatic@3.1.0:
+    dependencies:
+      d3-color: 3.1.0
+      d3-interpolate: 3.0.1
+
+  d3-scale@4.0.2:
+    dependencies:
+      d3-array: 3.2.4
+      d3-format: 3.1.2
+      d3-interpolate: 3.0.1
+      d3-time: 3.1.0
+      d3-time-format: 4.1.0
+
+  d3-shape@3.2.0:
+    dependencies:
+      d3-path: 3.1.0
+
+  d3-time-format@4.1.0:
+    dependencies:
+      d3-time: 3.1.0
+
+  d3-time@3.1.0:
+    dependencies:
+      d3-array: 3.2.4
+
+  d3-timer@3.0.1: {}
+
+  dagre@0.8.5:
+    dependencies:
+      graphlib: 2.1.8
+      lodash: 4.18.1
 
   dayjs@1.11.20: {}
 
@@ -2262,6 +3078,8 @@ snapshots:
 
   esutils@2.0.3: {}
 
+  eventemitter3@5.0.4: {}
+
   fast-deep-equal@3.1.3: {}
 
   fast-json-stable-stringify@2.1.0: {}
@@ -2271,6 +3089,8 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.4):
     optionalDependencies:
       picomatch: 4.0.4
+
+  fecha@4.2.3: {}
 
   file-entry-cache@8.0.0:
     dependencies:
@@ -2288,10 +3108,14 @@ snapshots:
 
   flatted@3.4.2: {}
 
+  flru@1.0.2: {}
+
   fsevents@2.3.3:
     optional: true
 
   gensync@1.0.0-beta.2: {}
+
+  gl-matrix@3.4.4: {}
 
   glob-parent@6.0.2:
     dependencies:
@@ -2299,17 +3123,36 @@ snapshots:
 
   globals@17.5.0: {}
 
+  graphlib@2.1.8:
+    dependencies:
+      lodash: 4.18.1
+
   hermes-estree@0.25.1: {}
 
   hermes-parser@0.25.1:
     dependencies:
       hermes-estree: 0.25.1
 
+  html2canvas@1.4.1:
+    dependencies:
+      css-line-break: 2.1.0
+      text-segmentation: 1.0.3
+
+  iconv-lite@0.6.3:
+    dependencies:
+      safer-buffer: 2.1.2
+
   ignore@5.3.2: {}
 
   ignore@7.0.5: {}
 
   imurmurhash@0.1.4: {}
+
+  internmap@2.0.3: {}
+
+  is-any-array@3.0.0: {}
+
+  is-arrayish@0.3.4: {}
 
   is-extglob@2.1.1: {}
 
@@ -2399,6 +3242,8 @@ snapshots:
     dependencies:
       p-locate: 5.0.0
 
+  lodash@4.18.1: {}
+
   lru-cache@5.1.1:
     dependencies:
       yallist: 3.1.1
@@ -2406,6 +3251,25 @@ snapshots:
   minimatch@10.2.5:
     dependencies:
       brace-expansion: 5.0.5
+
+  ml-array-max@2.0.0:
+    dependencies:
+      is-any-array: 3.0.0
+
+  ml-array-min@2.0.0:
+    dependencies:
+      is-any-array: 3.0.0
+
+  ml-array-rescale@2.0.0:
+    dependencies:
+      is-any-array: 3.0.0
+      ml-array-max: 2.0.0
+      ml-array-min: 2.0.0
+
+  ml-matrix@6.12.2:
+    dependencies:
+      is-any-array: 3.0.0
+      ml-array-rescale: 2.0.0
 
   ms@2.1.3: {}
 
@@ -2435,6 +3299,8 @@ snapshots:
   path-exists@4.0.0: {}
 
   path-key@3.1.1: {}
+
+  pdfast@0.2.0: {}
 
   picocolors@1.1.1: {}
 
@@ -2480,6 +3346,10 @@ snapshots:
       '@rolldown/binding-win32-arm64-msvc': 1.0.0-rc.16
       '@rolldown/binding-win32-x64-msvc': 1.0.0-rc.16
 
+  rw@1.3.3: {}
+
+  safer-buffer@2.1.2: {}
+
   scheduler@0.27.0: {}
 
   scroll-into-view-if-needed@3.1.0:
@@ -2496,11 +3366,30 @@ snapshots:
 
   shebang-regex@3.0.0: {}
 
+  simple-swizzle@0.2.4:
+    dependencies:
+      is-arrayish: 0.3.4
+
   source-map-js@1.2.1: {}
 
   string-convert@0.2.1: {}
 
+  styled-components@6.4.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+    dependencies:
+      '@emotion/is-prop-valid': 1.4.0
+      csstype: 3.2.3
+      react: 19.2.5
+      stylis: 4.3.6
+    optionalDependencies:
+      react-dom: 19.2.5(react@19.2.5)
+
   stylis@4.3.6: {}
+
+  svg-path-parser@1.1.0: {}
+
+  text-segmentation@1.0.3:
+    dependencies:
+      utrie: 1.0.2
 
   throttle-debounce@5.0.2: {}
 
@@ -2513,8 +3402,7 @@ snapshots:
     dependencies:
       typescript: 6.0.3
 
-  tslib@2.8.1:
-    optional: true
+  tslib@2.8.1: {}
 
   type-check@0.4.0:
     dependencies:
@@ -2544,6 +3432,10 @@ snapshots:
   uri-js@4.4.1:
     dependencies:
       punycode: 2.3.1
+
+  utrie@1.0.2:
+    dependencies:
+      base64-arraybuffer: 1.0.2
 
   vite@8.0.9(@types/node@24.12.2):
     dependencies:
