@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"skill-eval/agent"
+	"skill-eval/eval"
 	"skill-eval/providers"
 
 	"github.com/sirupsen/logrus"
@@ -35,6 +36,10 @@ func main() {
 
 	//运行智能体
 	o.Run()
+
+	trace := o.GetTrace()
+
+	eval.Exec(trace, eval.BuildDefaultScorer())
 
 }
 
