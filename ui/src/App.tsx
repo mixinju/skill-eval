@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ConfigProvider, App as AntApp, Layout } from 'antd';
 import { ExperimentOutlined, FileSearchOutlined, SwapOutlined } from '@ant-design/icons';
 import zhCN from 'antd/locale/zh_CN';
@@ -38,8 +38,47 @@ const darkTheme = {
   },
 };
 
+const lightTheme = {
+  token: {
+    colorPrimary: '#0891b2',
+    colorBgContainer: '#ffffff',
+    colorBgElevated: '#ffffff',
+    colorBorder: '#e2e8f0',
+    colorText: '#0f172a',
+    colorTextSecondary: '#64748b',
+    borderRadius: 8,
+    fontFamily: "'Outfit', sans-serif",
+  },
+  components: {
+    Card: { colorBgContainer: '#ffffff', colorBorderSecondary: '#e2e8f0' },
+    Table: {
+      colorBgContainer: '#ffffff',
+      headerBg: '#f8fafc',
+      headerColor: '#475569',
+      borderColor: '#e2e8f0',
+      rowHoverBg: 'rgba(8,145,178,0.04)',
+    },
+    Descriptions: { colorSplit: '#e2e8f0' },
+    Timeline: { dotBg: '#ffffff' },
+    Collapse: { headerBg: 'transparent', contentBg: '#f1f5f9' },
+    Tag: { defaultBg: 'rgba(0,0,0,0.02)', defaultColor: '#334155' },
+  },
+};
+
+type Theme = 'dark' | 'light';
+
 function App() {
   const [selected, setSelected] = useState<EvalRecord | undefined>();
+  const [theme, setTheme] = useState<Theme>(() => {
+    return (localStorage.getItem('skill-eval-theme') as Theme) || 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('skill-eval-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
 
   const renderContent = () => {
     if (!selected) {
@@ -82,7 +121,7 @@ function App() {
       : '';
 
   return (
-    <ConfigProvider locale={zhCN} theme={darkTheme}>
+    <ConfigProvider locale={zhCN} theme={theme === 'dark' ? darkTheme : lightTheme}>
       <AntApp>
         <Layout style={{ height: '100vh' }}>
           <Sider width={300} className="sidebar">
@@ -90,6 +129,8 @@ function App() {
               records={mockRecords}
               selectedId={selected?.id}
               onSelect={setSelected}
+              theme={theme}
+              onToggleTheme={toggleTheme}
             />
           </Sider>
           <Content className="content-area">

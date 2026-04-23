@@ -1,4 +1,4 @@
-import { Card, Descriptions, Tag, Row, Col } from 'antd';
+import { Card, Descriptions, Row, Col } from 'antd';
 import { Radar } from '@ant-design/charts';
 import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
 import type { Report, Trace, Verdict } from '../types';

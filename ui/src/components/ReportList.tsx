@@ -7,6 +7,8 @@ import {
   FileTextOutlined,
   ClockCircleOutlined,
   ExperimentOutlined,
+  SunOutlined,
+  MoonOutlined,
 } from '@ant-design/icons';
 import type { EvalRecord } from '../types';
 
@@ -14,9 +16,11 @@ interface ReportListProps {
   records: EvalRecord[];
   selectedId?: string;
   onSelect: (record: EvalRecord) => void;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
 }
 
-export default function ReportList({ records, selectedId, onSelect }: ReportListProps) {
+export default function ReportList({ records, selectedId, onSelect, theme, onToggleTheme }: ReportListProps) {
   const [modelFilter, setModelFilter] = useState<string | undefined>();
   const [skillFilter, setSkillFilter] = useState<string | undefined>();
   const [passFilter, setPassFilter] = useState<string | undefined>();
@@ -55,11 +59,14 @@ export default function ReportList({ records, selectedId, onSelect }: ReportList
           <div className="sidebar-logo-icon">
             <ExperimentOutlined />
           </div>
-          <div>
+          <div style={{ flex: 1 }}>
             <div className="sidebar-logo-text">Skill Eval</div>
             <div className="sidebar-logo-sub">
               <Badge status="processing" /> {records.length} records
             </div>
+          </div>
+          <div className="theme-toggle" onClick={onToggleTheme} title={theme === 'dark' ? '切换浅色' : '切换深色'}>
+            {theme === 'dark' ? <SunOutlined /> : <MoonOutlined />}
           </div>
         </div>
         <div className="filter-group">

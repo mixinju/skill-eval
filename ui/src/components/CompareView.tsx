@@ -1,10 +1,8 @@
-import { Card, Descriptions, Table, Tag, Typography, Row, Col, Alert, Statistic } from 'antd';
+import { Card, Descriptions, Row, Col } from 'antd';
 import { Column } from '@ant-design/charts';
-import { CheckCircleFilled, CloseCircleFilled, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { CheckCircleFilled, CloseCircleFilled, BulbOutlined } from '@ant-design/icons';
 import type { CompareReport, Verdict, Span } from '../types';
 import SpanTimeline from './SpanTimeline';
-
-const { Text, Paragraph } = Typography;
 
 interface CompareViewProps {
   compareReport: CompareReport;
@@ -21,44 +19,6 @@ function spanStats(spans: Span[]) {
   return { llmCalls, toolCalls, totalTokens, totalDuration };
 }
 
-const scoreColumns = [
-  {
-    title: '评分项',
-    dataIndex: ['info', 'name'],
-    key: 'name',
-    width: 140,
-  },
-  {
-    title: '描述',
-    dataIndex: ['info', 'desc'],
-    key: 'desc',
-    width: 180,
-  },
-  {
-    title: '分数',
-    dataIndex: 'score',
-    key: 'score',
-    width: 80,
-    render: (v: number) => <Text strong>{(v * 10).toFixed(1)}</Text>,
-  },
-  {
-    title: '状态',
-    dataIndex: 'pass',
-    key: 'pass',
-    width: 80,
-    render: (pass: boolean) =>
-      pass
-        ? <Tag icon={<CheckCircleFilled />} color="success">PASS</Tag>
-        : <Tag icon={<CloseCircleFilled />} color="error">FAIL</Tag>,
-  },
-  {
-    title: '理由',
-    dataIndex: 'reason',
-    key: 'reason',
-    ellipsis: true,
-  },
-];
-
 export default function CompareView({ compareReport }: CompareViewProps) {
   const { traceA, traceB, reportA, reportB, scores, conclusion } = compareReport;
   const statsA = spanStats(traceA.spans);
@@ -69,8 +29,8 @@ export default function CompareView({ compareReport }: CompareViewProps) {
     { metric: 'LLM 调用', model: reportB.model, value: statsB.llmCalls },
     { metric: 'Tool 调用', model: reportA.model, value: statsA.toolCalls },
     { metric: 'Tool 调用', model: reportB.model, value: statsB.toolCalls },
-    { metric: '迭代次数', model: reportA.model, value: reportA.iterations },
-    { metric: '迭代次数', model: reportB.model, value: reportB.iterations },
+    { metric: '迭代轮次', model: reportA.model, value: reportA.iterations },
+    { metric: '迭代轮次', model: reportB.model, value: reportB.iterations },
   ];
 
   const chartConfig = {
@@ -79,124 +39,131 @@ export default function CompareView({ compareReport }: CompareViewProps) {
     yField: 'value',
     colorField: 'model',
     group: true,
-    height: 280,
-    style: { inset: 5 },
+    height: 260,
+    style: { inset: 5, radiusTopLeft: 4, radiusTopRight: 4 },
+    scale: { color: { range: ['#22d3ee', '#a78bfa'] } },
+    axis: {
+      x: { label: { style: { fill: '#a1a1aa', fontSize: 11, fontFamily: 'Outfit' } }, line: { style: { stroke: '#3f3f46' } } },
+      y: { label: { style: { fill: '#71717a', fontSize: 10, fontFamily: 'Fira Code' } }, grid: { line: { style: { stroke: '#27272a' } } } },
+    },
+    legend: { color: { itemLabelFill: '#a1a1aa', itemLabelFontFamily: 'Fira Code', itemLabelFontSize: 10 } },
+    theme: { background: 'transparent' },
   };
 
   const tokenDiff = reportA.totalTokens - reportB.totalTokens;
   const durationDiff = reportA.duration - reportB.duration;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <Row gutter={16}>
+    <div className="gap-20 stagger">
+      {/* A vs B Info */}
+      <Row gutter={12}>
         <Col span={12}>
-          <Card
-            title={<><Tag color="blue">A</Tag> {reportA.model}</>}
-            size="small"
-          >
-            <Descriptions column={2} size="small">
-              <Descriptions.Item label="目标 Skill">
-                <Tag color="blue">{reportA.targetSkill}</Tag>
-              </Descriptions.Item>
-              <Descriptions.Item label="迭代次数">{reportA.iterations}</Descriptions.Item>
-              <Descriptions.Item label="Token 消耗">
-                {reportA.totalTokens.toLocaleString()}
-              </Descriptions.Item>
-              <Descriptions.Item label="耗时">{(reportA.duration / 1000).toFixed(1)}s</Descriptions.Item>
-              <Descriptions.Item label="LLM 调用">{statsA.llmCalls}</Descriptions.Item>
-              <Descriptions.Item label="Tool 调用">{statsA.toolCalls}</Descriptions.Item>
+          <Card className="section-card compare-card a" size="small"
+            title={<><span className="compare-label a">A</span> <span style={{ marginLeft: 8 }}>{reportA.model}</span></>}>
+            <Descriptions column={2} size="small" className="dark-descriptions">
+              <Descriptions.Item label="Skill"><span className="mono-val">{reportA.targetSkill}</span></Descriptions.Item>
+              <Descriptions.Item label="迭代"><span className="mono-val">{reportA.iterations}轮</span></Descriptions.Item>
+              <Descriptions.Item label="Token"><span className="mono-val">{reportA.totalTokens.toLocaleString()}</span></Descriptions.Item>
+              <Descriptions.Item label="耗时"><span className="mono-val">{(reportA.duration / 1000).toFixed(1)}s</span></Descriptions.Item>
+              <Descriptions.Item label="LLM"><span className="mono-val">{statsA.llmCalls}次</span></Descriptions.Item>
+              <Descriptions.Item label="Tool"><span className="mono-val">{statsA.toolCalls}次</span></Descriptions.Item>
             </Descriptions>
           </Card>
         </Col>
         <Col span={12}>
-          <Card
-            title={<><Tag color="purple">B</Tag> {reportB.model}</>}
-            size="small"
-          >
-            <Descriptions column={2} size="small">
-              <Descriptions.Item label="目标 Skill">
-                <Tag color="purple">{reportB.targetSkill}</Tag>
-              </Descriptions.Item>
-              <Descriptions.Item label="迭代次数">{reportB.iterations}</Descriptions.Item>
-              <Descriptions.Item label="Token 消耗">
-                {reportB.totalTokens.toLocaleString()}
-              </Descriptions.Item>
-              <Descriptions.Item label="耗时">{(reportB.duration / 1000).toFixed(1)}s</Descriptions.Item>
-              <Descriptions.Item label="LLM 调用">{statsB.llmCalls}</Descriptions.Item>
-              <Descriptions.Item label="Tool 调用">{statsB.toolCalls}</Descriptions.Item>
+          <Card className="section-card compare-card b" size="small"
+            title={<><span className="compare-label b">B</span> <span style={{ marginLeft: 8 }}>{reportB.model}</span></>}>
+            <Descriptions column={2} size="small" className="dark-descriptions">
+              <Descriptions.Item label="Skill"><span className="mono-val">{reportB.targetSkill}</span></Descriptions.Item>
+              <Descriptions.Item label="迭代"><span className="mono-val">{reportB.iterations}轮</span></Descriptions.Item>
+              <Descriptions.Item label="Token"><span className="mono-val">{reportB.totalTokens.toLocaleString()}</span></Descriptions.Item>
+              <Descriptions.Item label="耗时"><span className="mono-val">{(reportB.duration / 1000).toFixed(1)}s</span></Descriptions.Item>
+              <Descriptions.Item label="LLM"><span className="mono-val">{statsB.llmCalls}次</span></Descriptions.Item>
+              <Descriptions.Item label="Tool"><span className="mono-val">{statsB.toolCalls}次</span></Descriptions.Item>
             </Descriptions>
           </Card>
         </Col>
       </Row>
 
-      <Card title="差异概览" size="small">
-        <Row gutter={16}>
-          <Col span={6}>
-            <Statistic
-              title="Token 差异"
-              value={Math.abs(tokenDiff)}
-              prefix={tokenDiff > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-              suffix={tokenDiff > 0 ? 'A 更多' : 'B 更多'}
-              valueStyle={{ color: tokenDiff > 0 ? '#cf1322' : '#3f8600', fontSize: 16 }}
-            />
-          </Col>
-          <Col span={6}>
-            <Statistic
-              title="耗时差异"
-              value={Math.abs(durationDiff / 1000).toFixed(1)}
-              prefix={durationDiff > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-              suffix={`s ${durationDiff > 0 ? 'A 更慢' : 'B 更慢'}`}
-              valueStyle={{ color: durationDiff > 0 ? '#cf1322' : '#3f8600', fontSize: 16 }}
-            />
-          </Col>
-          <Col span={6}>
-            <Statistic title="A 迭代" value={reportA.iterations} suffix="轮" valueStyle={{ fontSize: 16 }} />
-          </Col>
-          <Col span={6}>
-            <Statistic title="B 迭代" value={reportB.iterations} suffix="轮" valueStyle={{ fontSize: 16 }} />
-          </Col>
-        </Row>
-      </Card>
+      {/* Diff stats */}
+      <div className="stat-grid">
+        <div className={`stat-item ${tokenDiff > 0 ? 'rose' : 'green'}`}>
+          <div className="stat-label">Token 差异</div>
+          <div className="stat-value">
+            {tokenDiff > 0 ? '+' : ''}{tokenDiff.toLocaleString()}
+          </div>
+        </div>
+        <div className={`stat-item ${durationDiff > 0 ? 'rose' : 'green'}`}>
+          <div className="stat-label">耗时差异</div>
+          <div className="stat-value">
+            {durationDiff > 0 ? '+' : ''}{(durationDiff / 1000).toFixed(1)}<span className="stat-suffix">s</span>
+          </div>
+        </div>
+        <div className="stat-item cyan">
+          <div className="stat-label">A 迭代</div>
+          <div className="stat-value">{reportA.iterations}<span className="stat-suffix">轮</span></div>
+        </div>
+        <div className="stat-item violet">
+          <div className="stat-label">B 迭代</div>
+          <div className="stat-value">{reportB.iterations}<span className="stat-suffix">轮</span></div>
+        </div>
+      </div>
 
-      <Row gutter={16}>
+      {/* Chart + Scores */}
+      <Row gutter={12}>
         <Col span={10}>
-          <Card title="调用统计对比" size="small">
+          <Card className="section-card" title="调用统计" size="small">
             <Column {...chartConfig} />
           </Card>
         </Col>
         <Col span={14}>
-          <Card title="对比评分" size="small">
-            <Table
-              dataSource={scores}
-              columns={scoreColumns}
-              pagination={false}
-              size="small"
-              rowKey={(r: Verdict) => r.info.name}
-            />
+          <Card className="section-card" title="对比评分" size="small">
+            <div className="score-list">
+              {scores.map((s: Verdict, i: number) => (
+                <div className="score-row" key={s.info.name} style={{ animationDelay: `${i * 60}ms` }}>
+                  <div className={`score-status ${s.pass ? 'pass' : 'fail'}`}>
+                    {s.pass ? <CheckCircleFilled /> : <CloseCircleFilled />}
+                  </div>
+                  <div className="score-info">
+                    <div className="score-name">{s.info.name}</div>
+                    <div className="score-desc">{s.info.desc}</div>
+                  </div>
+                  <div className="score-bar-wrap">
+                    <div className="score-bar-outer">
+                      <div
+                        className={`score-bar-inner ${s.score >= 0.7 ? 'high' : s.score >= 0.4 ? 'mid' : 'low'}`}
+                        style={{ width: `${s.score * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="score-number">{(s.score * 10).toFixed(1)}</div>
+                </div>
+              ))}
+            </div>
           </Card>
         </Col>
       </Row>
 
+      {/* Conclusion */}
       {conclusion && (
-        <Alert
-          message="AI 对比结论"
-          description={<Paragraph style={{ margin: 0 }}>{conclusion}</Paragraph>}
-          type="info"
-          showIcon
-        />
+        <div className="conclusion-block">
+          <div className="conclusion-title"><BulbOutlined /> AI 对比结论</div>
+          <div className="conclusion-text">{conclusion}</div>
+        </div>
       )}
 
-      <Row gutter={16}>
+      {/* Parallel Timelines */}
+      <Row gutter={12}>
         <Col span={12}>
-          <Card title={`执行链路 — ${reportA.model}`} size="small">
-            <div style={{ maxHeight: 600, overflow: 'auto' }}>
+          <Card className="section-card compare-card a" title={`执行链路 — ${reportA.model}`} size="small">
+            <div style={{ maxHeight: 500, overflow: 'auto' }}>
               <SpanTimeline spans={traceA.spans} />
             </div>
           </Card>
         </Col>
         <Col span={12}>
-          <Card title={`执行链路 — ${reportB.model}`} size="small">
-            <div style={{ maxHeight: 600, overflow: 'auto' }}>
+          <Card className="section-card compare-card b" title={`执行链路 — ${reportB.model}`} size="small">
+            <div style={{ maxHeight: 500, overflow: 'auto' }}>
               <SpanTimeline spans={traceB.spans} />
             </div>
           </Card>
