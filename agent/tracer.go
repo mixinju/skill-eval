@@ -84,7 +84,7 @@ type Trace struct {
 	ID                 string    `json:"id"`
 	AgentName          string    `json:"agentName"`
 	Model              string    `json:"model"`
-	UserPrompt         string    `json:"userPrompt"`
+	UserPrompt         string    `json:"userPrompt"` //用户的首次输入
 	TargetSkill        string    `json:"targetSkill,omitempty"`
 	StartTime          time.Time `json:"startTime"`
 	EndTime            time.Time `json:"endTime,omitempty"`

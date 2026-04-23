@@ -21,7 +21,7 @@ type Report struct {
 	Pass        bool      `json:"pass"`
 }
 
-func Evaluate(trace *agent.Trace, scorers []Scorer) *Report {
+func Exec(trace *agent.Trace, scorers []Scorer) *Report {
 	report := &Report{
 		TraceID:     trace.ID,
 		AgentName:   trace.AgentName,
@@ -35,8 +35,8 @@ func Evaluate(trace *agent.Trace, scorers []Scorer) *Report {
 	}
 
 	for _, scorer := range scorers {
-		logrus.Infof("[Eval] 执行评分器: %s", scorer.Name())
-		result := scorer.Score(trace)
+		logrus.Infof("[Eval] 执行评分器: %s", scorer.Item())
+		result, _ := scorer.Score(trace)
 		report.Scores = append(report.Scores, result)
 		if !result.Pass {
 			report.Pass = false
@@ -62,7 +62,7 @@ func (r *Report) Print() {
 		if !s.Pass {
 			status = "FAIL"
 		}
-		fmt.Printf("  [%s] %-12s %.1f  %s\n", status, s.Name, s.Score, s.Reason)
+		fmt.Printf("  [%s] %-12s %.1f  %s\n", status, s.Info, s.Score, s.Reason)
 	}
 	fmt.Println("-----------------------------")
 	if r.Pass {

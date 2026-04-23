@@ -22,7 +22,12 @@ func NewLLMJudgeScorer(client *openai.Client, model string) *LLMJudgeScorer {
 	return &LLMJudgeScorer{Client: client, Model: model}
 }
 
-func (s *LLMJudgeScorer) Name() string { return "llm_judge" }
+func (s *LLMJudgeScorer) Item() ScoreItem {
+	return ScoreItem{
+		Name: "大模型评估产物结果",
+		Desc: "由大模型评估生成的产物文件",
+	}
+}
 
 func (s *LLMJudgeScorer) Score(trace *agent.Trace) Verdict {
 
@@ -31,7 +36,7 @@ func (s *LLMJudgeScorer) Score(trace *agent.Trace) Verdict {
 		logrus.Warnf("ArtifactsAndResult 反序列化失败 %v", err.Error())
 	}
 	if len(f.Artifacts) == 0 {
-		return Verdict{Name: s.Name(), Pass: false, Score: 0, Reason: "无产物文件，跳过 LLM 评分"}
+		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "无产物文件，跳过 LLM 评分"}
 	}
 
 	var contents []string
@@ -45,7 +50,7 @@ func (s *LLMJudgeScorer) Score(trace *agent.Trace) Verdict {
 	}
 
 	if len(contents) == 0 {
-		return Verdict{Name: s.Name(), Pass: false, Score: 0, Reason: "所有产物文件均无法提取内容"}
+		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "所有产物文件均无法提取内容"}
 	}
 
 	prompt := fmt.Sprintf(`你是一个评测助手。用户给 agent 的指令是：
@@ -68,11 +73,11 @@ func (s *LLMJudgeScorer) Score(trace *agent.Trace) Verdict {
 
 	if err != nil {
 		logrus.Errorf("[LLMJudge] LLM 调用失败: %v", err)
-		return Verdict{Name: s.Name(), Pass: false, Score: 0, Reason: "LLM 调用失败: " + err.Error()}
+		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 调用失败: " + err.Error()}
 	}
 
 	if len(resp.Choices) == 0 {
-		return Verdict{Name: s.Name(), Pass: false, Score: 0, Reason: "LLM 返回为空"}
+		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 返回为空"}
 	}
 
 	raw := resp.Choices[0].Message.Content
@@ -83,11 +88,11 @@ func (s *LLMJudgeScorer) Score(trace *agent.Trace) Verdict {
 	}
 	if err := json.Unmarshal([]byte(raw), &result); err != nil {
 		logrus.Warnf("[LLMJudge] 解析 LLM 返回失败: %v, raw: %s", err, raw)
-		return Verdict{Name: s.Name(), Pass: false, Score: 0, Reason: "LLM 返回格式异常: " + raw}
+		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 返回格式异常: " + raw}
 	}
 
 	return Verdict{
-		Name:   s.Name(),
+		Info:   s.Item(),
 		Pass:   result.Score >= 0.6,
 		Score:  result.Score,
 		Reason: result.Reason,

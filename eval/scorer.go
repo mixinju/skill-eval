@@ -5,13 +5,17 @@ import (
 )
 
 type Verdict struct {
-	Name   string  `json:"name"`
-	Pass   bool    `json:"pass"`
-	Score  float64 `json:"score"`
-	Reason string  `json:"reason"`
+	Info   ScoreItem `json:"info"`
+	Pass   bool      `json:"pass"`
+	Score  float64   `json:"score"`
+	Reason string    `json:"reason"`
 }
 
+type ScoreItem struct {
+	Name string `json:"name"` // 评分项名称
+	Desc string `json:"desc"` // 评分项描述
+}
 type Scorer interface {
-	Name() string
-	Score(trace *agent.Trace) Verdict
+	Item() ScoreItem
+	Score(trace ...*agent.Trace) (Verdict, error)
 }

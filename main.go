@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"path/filepath"
 	"runtime"
-
 	"skill-eval/agent"
 	"skill-eval/providers"
 
@@ -36,7 +35,6 @@ func main() {
 
 	//运行智能体
 	o.Run()
-
 }
 
 func init() {

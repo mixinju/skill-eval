@@ -9,11 +9,16 @@ type SkillHitScorer struct{}
 
 func NewSkillHitScorer() *SkillHitScorer { return &SkillHitScorer{} }
 
-func (s *SkillHitScorer) Name() string { return "skill_hit" }
+func (s *SkillHitScorer) Item() ScoreItem {
+	return ScoreItem{
+		Name: "Skill是否命中",
+		Desc: "根据执行链路，评测是否命中目标Skill的展示",
+	}
+}
 
 func (s *SkillHitScorer) Score(trace *agent.Trace) Verdict {
 	if trace.TargetSkill == "" {
-		return Verdict{Name: s.Name(), Pass: true, Score: 1, Reason: "未设置目标 skill，跳过检查"}
+		return Verdict{Info: s.Item(), Pass: true, Score: 1, Reason: "未设置目标 skill，跳过检查"}
 	}
 
 	for _, span := range trace.Spans {
@@ -25,9 +30,9 @@ func (s *SkillHitScorer) Score(trace *agent.Trace) Verdict {
 			continue
 		}
 		if name, _ := params["name"].(string); name == trace.TargetSkill {
-			return Verdict{Name: s.Name(), Pass: true, Score: 1, Reason: "命中目标 skill: " + trace.TargetSkill}
+			return Verdict{Info: s.Item(), Pass: true, Score: 1, Reason: "命中目标 skill: " + trace.TargetSkill}
 		}
 	}
 
-	return Verdict{Name: s.Name(), Pass: false, Score: 0, Reason: "未命中目标 skill: " + trace.TargetSkill}
+	return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "未命中目标 skill: " + trace.TargetSkill}
 }
