@@ -29,44 +29,18 @@ func (s *ExecProcessScorer) Item() ScoreItem {
 	}
 }
 
-func (s *ExecProcessScorer) Score(trace ...*agent.Trace) Verdict {
+func (s *ExecProcessScorer) Score(trace ...*agent.Trace) (Verdict, error) {
 	// 构建提示词
-	prompt := s.buildPrompt(trace[0])
 
-	// 调用 LLM 评分
-	resp, err := s.Client.Chat.Completions.New(context.Background(), openai.ChatCompletionNewParams{
-		Messages: []openai.ChatCompletionMessageParamUnion{
-			openai.SystemMessage(prompt),
-		},
-		Model: s.Model,
-	})
-	if err != nil {
-		logrus.Errorf("[ExecProcessScorer] LLM 调用失败: %v", err)
-		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 调用失败: " + err.Error()}
+	first, second, e := extraTrace(trace...)
+	if e == nil {
+		return Verdict{}, e
 	}
 
-	if len(resp.Choices) == 0 {
-		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 返回为空"}
+	if second == nil {
+		return s.single(first)
 	}
-
-	raw := resp.Choices[0].Message.Content
-
-	// 解析返回结果
-	var result struct {
-		Score  float64 `json:"score"`
-		Reason string  `json:"reason"`
-	}
-	if err := json.Unmarshal([]byte(raw), &result); err != nil {
-		logrus.Warnf("[ExecProcessScorer] 解析 LLM 返回失败: %v, raw: %s", err, raw)
-		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 返回格式异常: " + raw}
-	}
-
-	return Verdict{
-		Info:   s.Item(),
-		Pass:   result.Score >= 0.6,
-		Score:  result.Score,
-		Reason: result.Reason,
-	}
+	return s.compare(first, second)
 }
 
 func (s *ExecProcessScorer) buildPrompt(trace *agent.Trace) string {
@@ -137,4 +111,48 @@ func (s *ExecProcessScorer) buildPrompt(trace *agent.Trace) string {
 	sb.WriteString("\n只返回 JSON，不要其他内容。")
 
 	return sb.String()
+}
+
+func (s *ExecProcessScorer) single(trace *agent.Trace) (Verdict, error) {
+
+	prompt := s.buildPrompt(trace)
+
+	// 调用 LLM 评分
+	resp, err := s.Client.Chat.Completions.New(context.Background(), openai.ChatCompletionNewParams{
+		Messages: []openai.ChatCompletionMessageParamUnion{
+			openai.SystemMessage(prompt),
+		},
+		Model: s.Model,
+	})
+	if err != nil {
+		logrus.Errorf("[ExecProcessScorer] LLM 调用失败: %v", err)
+		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 调用失败: " + err.Error()}, nil
+	}
+
+	if len(resp.Choices) == 0 {
+		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 返回为空"}, nil
+	}
+
+	raw := resp.Choices[0].Message.Content
+
+	// 解析返回结果
+	var result struct {
+		Score  float64 `json:"score"`
+		Reason string  `json:"reason"`
+	}
+	if err := json.Unmarshal([]byte(raw), &result); err != nil {
+		logrus.Warnf("[ExecProcessScorer] 解析 LLM 返回失败: %v, raw: %s", err, raw)
+		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 返回格式异常: " + raw}, nil
+	}
+
+	return Verdict{
+		Info:   s.Item(),
+		Pass:   result.Score >= 0.6,
+		Score:  result.Score,
+		Reason: result.Reason,
+	}, nil
+}
+
+func (s *ExecProcessScorer) compare(first, second *agent.Trace) (Verdict, error) {
+	return Verdict{}, nil
 }

@@ -7,8 +7,8 @@ import (
 type Verdict struct {
 	Info   ScoreItem `json:"info"`
 	Pass   bool      `json:"pass"`
-	Score  float64   `json:"score"`
-	Reason string    `json:"reason"`
+	Score  float64   `json:"score"`  // 这个字段只在单流程是有效的，对比评测下，这个分数没有意义
+	Reason string    `json:"reason"` // AI评测的结论
 }
 
 type ScoreItem struct {

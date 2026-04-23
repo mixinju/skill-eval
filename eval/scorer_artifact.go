@@ -94,13 +94,7 @@ func (s *ArtifactScorer) single(trace *agent.Trace) Verdict {
 }
 
 func (s *ArtifactScorer) compare(traceA, traceB *agent.Trace) Verdict {
-	vA := s.single(traceA)
-	vB := s.single(traceB)
-	avg := (vA.Score + vB.Score) / 2
-	return Verdict{
-		Info:   s.Item(),
-		Pass:   vA.Pass || vB.Pass,
-		Score:  avg,
-		Reason: fmt.Sprintf("A: %s | B: %s", vA.Reason, vB.Reason),
-	}
+
+	//TODO 暂时未实现
+	panic("待实现")
 }
