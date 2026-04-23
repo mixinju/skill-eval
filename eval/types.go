@@ -3,6 +3,7 @@ package eval
 import (
 	"fmt"
 	"skill-eval/agent"
+	"skill-eval/providers"
 )
 
 // Unit 一个评测的最小集合
@@ -24,4 +25,23 @@ func extraTrace(trace ...*agent.Trace) (firsts, second *agent.Trace, err error) 
 		return trace[0], nil, nil
 	}
 	return trace[0], trace[1], nil
+}
+
+func BuildDefaultScorer() []Scorer {
+
+	client := providers.NewClient()
+	var s []Scorer
+	processScorer := NewExecProcessScorer(&client, "kimi-2.5")
+	s = append(s, processScorer)
+
+	artifactScorer := NewArtifactScorer(&client, "kimi-2.5")
+
+	hitScorer := NewSkillHitScorer()
+	s = append(s, hitScorer)
+	successScorer := NewSuccessScorer()
+	s = append(s, successScorer)
+
+	s = append(s, artifactScorer)
+
+	return s
 }

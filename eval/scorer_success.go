@@ -1,6 +1,8 @@
 package eval
 
-import "skill-eval/agent"
+import (
+	"skill-eval/agent"
+)
 
 type SuccessScorer struct{}
 
@@ -13,9 +15,25 @@ func (s *SuccessScorer) Item() ScoreItem {
 	}
 }
 
-func (s *SuccessScorer) Score(trace *agent.Trace) Verdict {
-	if trace.Success {
-		return Verdict{Info: s.Item(), Pass: true, Score: 1, Reason: "agent 调用 finish 正常结束"}
+func (s *SuccessScorer) Score(trace ...*agent.Trace) (Verdict, error) {
+
+	first, second, e := extraTrace(trace...)
+	if e != nil {
+		return Verdict{}, e
 	}
-	return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "agent 未成功完成任务"}
+
+	if second == nil {
+		return s.single(first)
+	}
+
+	return s.compare(first, second)
+
+}
+
+func (s *SuccessScorer) single(trace *agent.Trace) (Verdict, error) {
+	return Verdict{}, nil
+}
+
+func (s *SuccessScorer) compare(first, second *agent.Trace) (Verdict, error) {
+	return Verdict{Info: s.Item(), Pass: false}, nil
 }

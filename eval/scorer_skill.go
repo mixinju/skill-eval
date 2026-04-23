@@ -16,9 +16,24 @@ func (s *SkillHitScorer) Item() ScoreItem {
 	}
 }
 
-func (s *SkillHitScorer) Score(trace *agent.Trace) Verdict {
+func (s *SkillHitScorer) Score(trace ...*agent.Trace) (Verdict, error) {
+
+	first, second, e := extraTrace(trace...)
+	if e != nil {
+		return Verdict{}, e
+	}
+
+	if second == nil {
+		return s.single(first)
+	}
+
+	return s.compare(first, second)
+
+}
+
+func (s *SkillHitScorer) single(trace *agent.Trace) (Verdict, error) {
 	if trace.TargetSkill == "" {
-		return Verdict{Info: s.Item(), Pass: true, Score: 1, Reason: "未设置目标 skill，跳过检查"}
+		return Verdict{Info: s.Item(), Pass: true, Score: 1, Reason: "未设置目标 skill，跳过检查"}, nil
 	}
 
 	for _, span := range trace.Spans {
@@ -30,9 +45,13 @@ func (s *SkillHitScorer) Score(trace *agent.Trace) Verdict {
 			continue
 		}
 		if name, _ := params["name"].(string); name == trace.TargetSkill {
-			return Verdict{Info: s.Item(), Pass: true, Score: 1, Reason: "命中目标 skill: " + trace.TargetSkill}
+			return Verdict{Info: s.Item(), Pass: true, Score: 1, Reason: "命中目标 skill: " + trace.TargetSkill}, nil
 		}
 	}
 
-	return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "未命中目标 skill: " + trace.TargetSkill}
+	return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "未命中目标 skill: " + trace.TargetSkill}, nil
+}
+
+func (s *SkillHitScorer) compare(first, second *agent.Trace) (Verdict, error) {
+	return Verdict{Info: s.Item(), Pass: true}, nil
 }

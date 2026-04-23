@@ -35,6 +35,7 @@ func main() {
 
 	//运行智能体
 	o.Run()
+
 }
 
 func init() {
