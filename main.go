@@ -31,7 +31,7 @@ func main() {
 
 	// 新建调度器
 	o := agent.NewOrchestrator(&client, agentConfig)
-	o.Tracer = agent.NewDefaultTracer("./traces")
+	o.Tracer = agent.NewDefaultTracer("./logs/traces")
 	o.SetTargetSkill("pdf")
 
 	//运行智能体
@@ -39,7 +39,9 @@ func main() {
 
 	trace := o.GetTrace()
 
-	eval.Exec(trace, eval.BuildDefaultScorer())
+	r := eval.Exec(trace, eval.BuildDefaultScorer())
+
+	r.Print()
 
 }
 
