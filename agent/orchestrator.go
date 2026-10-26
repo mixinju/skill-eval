@@ -185,6 +185,7 @@ func (o *Orchestrator) Run() {
 		Model:       o.Context.Agent.Model,
 		UserPrompt:  o.Context.Agent.UserPrompt,
 		TargetSkill: o.Context.TargetSkill,
+		Runner:      RunnerKernel,
 	})
 
 	success := false

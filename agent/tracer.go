@@ -2,6 +2,17 @@ package agent
 
 import "time"
 
+// Runner 标识一次评测是在哪个执行后端上跑的。
+// 目前只有自研内核（agent.Orchestrator）会写入 Trace。
+// codex 与 claude-code 先作为契约保留，仓库里还没有对应执行器。
+type Runner string
+
+const (
+	RunnerKernel     Runner = "kernel"
+	RunnerCodex      Runner = "codex"
+	RunnerClaudeCode Runner = "claude-code"
+)
+
 type EventType string
 
 const (
@@ -27,6 +38,7 @@ type TraceEvent struct {
 	AgentName  string `json:"agentName,omitempty"`
 	Model      string `json:"model,omitempty"`
 	UserPrompt string `json:"userPrompt,omitempty"`
+	Runner     Runner `json:"runner,omitempty"`
 	Success    bool   `json:"success,omitempty"`
 
 	// LLM
@@ -91,8 +103,9 @@ type Trace struct {
 	TotalTokens        int64     `json:"totalTokens"`
 	Iterations         int       `json:"iterations"`
 	Success            bool      `json:"success"`
+	Runner             Runner    `json:"runner,omitempty"`
 	Spans              []*Span   `json:"spans"`
-	ArtifactsAndResult string
+	ArtifactsAndResult string    `json:"artifactsAndResult,omitempty"`
 }
 
 type TracerHook interface {
