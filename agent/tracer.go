@@ -16,6 +16,7 @@ const (
 	EventSkillStart       EventType = "skill_start"
 	EventSkillEnd         EventType = "skill_end"
 	EventMarkArtifacts    EventType = "mark_artifacts"
+	EventNote             EventType = "note"
 )
 
 type TraceEvent struct {
@@ -47,6 +48,9 @@ type TraceEvent struct {
 	TargetSkill string `json:"targetSkill,omitempty"`
 
 	Error string `json:"error,omitempty"`
+
+	// Message 用于重试、压缩失败等不单独占 span 的过程记录。
+	Message string `json:"message,omitempty"`
 }
 
 type SpanKind string
@@ -81,18 +85,29 @@ type Span struct {
 }
 
 type Trace struct {
-	ID                 string    `json:"id"`
-	AgentName          string    `json:"agentName"`
-	Model              string    `json:"model"`
-	UserPrompt         string    `json:"userPrompt"` //用户的首次输入
-	TargetSkill        string    `json:"targetSkill,omitempty"`
-	StartTime          time.Time `json:"startTime"`
-	EndTime            time.Time `json:"endTime,omitempty"`
-	TotalTokens        int64     `json:"totalTokens"`
-	Iterations         int       `json:"iterations"`
-	Success            bool      `json:"success"`
-	Spans              []*Span   `json:"spans"`
-	ArtifactsAndResult string
+	ID                 string      `json:"id"`
+	AgentName          string      `json:"agentName"`
+	Model              string      `json:"model"`
+	UserPrompt         string      `json:"userPrompt"` //用户的首次输入
+	TargetSkill        string      `json:"targetSkill,omitempty"`
+	StartTime          time.Time   `json:"startTime"`
+	EndTime            time.Time   `json:"endTime,omitempty"`
+	TotalTokens        int64       `json:"totalTokens"`
+	Iterations         int         `json:"iterations"`
+	Success            bool        `json:"success"`
+	Spans              []*Span     `json:"spans"`
+	ArtifactsAndResult string      `json:"artifactsAndResult,omitempty"`
+	SchemaVersion      int         `json:"schemaVersion,omitempty"`
+	Runner             string      `json:"runner,omitempty"`
+	RunnerMeta         *RunnerMeta `json:"runnerMeta,omitempty"`
+	Status             string      `json:"status,omitempty"`
+	FailureReason      string      `json:"failureReason,omitempty"`
+	Error              string      `json:"error,omitempty"`
+	Workspace          string      `json:"workspace,omitempty"`
+	SkillPath          string      `json:"skillPath,omitempty"`
+	ExternalID         string      `json:"externalId,omitempty"`
+	Notes              []string    `json:"notes,omitempty"`
+	Steps              []Step      `json:"steps,omitempty"`
 }
 
 type TracerHook interface {

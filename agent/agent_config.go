@@ -19,6 +19,8 @@ type AgentConfig struct {
 	Skills        []tool.Skill
 	MaxToolCount  int
 	MaxIterations int
+	// Workspace 是本次运行的隔离工作目录。bash 与文件系统工具共用它。
+	Workspace string
 }
 
 type ConfigOpt func(*AgentConfig)
@@ -59,23 +61,41 @@ func WithMaxIterations(max int) ConfigOpt {
 	return func(c *AgentConfig) { c.MaxIterations = max }
 }
 
-func (a *AgentConfig) RegistryTool(tool ...tool.Tool) bool {
-	if len(tool) >= a.MaxToolCount {
+func WithWorkspace(workspace string) ConfigOpt {
+	return func(c *AgentConfig) { c.Workspace = workspace }
+}
+
+func (a *AgentConfig) RegistryTool(tools ...tool.Tool) bool {
+	if a.MaxToolCount > 0 && len(a.Tools)+len(tools) > a.MaxToolCount {
 		return false
 	}
-	a.Tools = append(a.Tools, tool...)
+	a.Tools = append(a.Tools, tools...)
 
 	return true
+}
+
+func (a *AgentConfig) resolveWorkspace() string {
+	if a.Workspace != "" {
+		return a.Workspace
+	}
+	base := os.Getenv("EVAL_WORKPLACE")
+	if base == "" {
+		base = "."
+	}
+	a.Workspace = filepath.Join(base, time.Now().Format("20060102_150405"))
+	return a.Workspace
 }
 
 func (a *AgentConfig) RegistryDefaultTools() {
 
 	var tools []tool.Tool
+	ws := a.resolveWorkspace()
 
-	fs := tool.NewFileSystem([]string{}, nil, 4*time.Second)
+	fs := tool.NewFileSystem([]string{ws}, nil, 4*time.Second)
+	fs.SetWorkspace(ws)
 	tools = append(tools, fs.GetTools()...)
 
-	bash := tool.NewBash("", 10*time.Second)
+	bash := tool.NewBash(ws, 30*time.Second)
 	tools = append(tools, bash.GetTools()...)
 
 	finish := tool.NewFinish()
@@ -90,13 +110,16 @@ func (a *AgentConfig) RegistryDefaultTools() {
 	a.Tools = tools
 }
 
-// RegistrySkills 加载SKILL
-// 默认从.claude/skills目录下加载所有的目录
+// RegistrySkills 加载 SKILL。
+// 默认从环境变量 EVAL_DEFAULT_SKILL_DIR 指向的目录加载，每个子目录需要有 SKILL.md。
 func (a *AgentConfig) RegistrySkills() {
+	a.RegistrySkillsFrom(os.Getenv("EVAL_DEFAULT_SKILL_DIR"))
+}
 
-	claudeSkillDir := os.Getenv("EVAL_DEFAULT_SKILL_DIR")
+// RegistrySkillsFrom 从指定目录加载技能。目录为空时跳过。
+func (a *AgentConfig) RegistrySkillsFrom(claudeSkillDir string) {
 	if claudeSkillDir == "" {
-		logrus.Warn("环境变量 EVAL_DEFAULT_SKILL_DIR 未设置，跳过技能加载")
+		logrus.Warn("未设置技能目录，跳过技能加载")
 		return
 	}
 

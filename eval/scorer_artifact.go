@@ -49,7 +49,7 @@ func (s *ArtifactScorer) single(trace *agent.Trace) Verdict {
 	}
 
 	if len(a.Artifacts) <= 0 {
-		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "未产出任何文件"}
+		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "未产出任何文件", Source: "deterministic"}
 	}
 
 	var message []openai.ChatCompletionMessageParamUnion
@@ -68,11 +68,11 @@ func (s *ArtifactScorer) single(trace *agent.Trace) Verdict {
 	})
 	if err != nil {
 		logrus.Warnf("调用大模型失败: %v", err)
-		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "调用大模型失败: " + err.Error()}
+		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "调用大模型失败: " + err.Error(), Source: "llm", Error: err.Error()}
 	}
 
 	if len(chat.Choices) == 0 {
-		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 返回为空"}
+		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 返回为空", Source: "llm", Error: "LLM 返回为空"}
 	}
 
 	raw := chat.Choices[0].Message.Content
@@ -82,7 +82,7 @@ func (s *ArtifactScorer) single(trace *agent.Trace) Verdict {
 	}
 	if err := json.Unmarshal([]byte(raw), &result); err != nil {
 		logrus.Warnf("解析 LLM 返回失败: %v, raw: %s", err, raw)
-		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 返回格式异常: " + raw}
+		return Verdict{Info: s.Item(), Pass: false, Score: 0, Reason: "LLM 返回格式异常: " + raw, Source: "llm", Error: "LLM 返回格式异常"}
 	}
 
 	return Verdict{
@@ -90,11 +90,19 @@ func (s *ArtifactScorer) single(trace *agent.Trace) Verdict {
 		Pass:   result.Score >= 0.6,
 		Score:  result.Score,
 		Reason: result.Reason,
+		Source: "llm",
 	}
 }
 
 func (s *ArtifactScorer) compare(traceA, traceB *agent.Trace) Verdict {
-
-	//TODO 暂时未实现
-	panic("待实现")
+	a := s.single(traceA)
+	b := s.single(traceB)
+	score := (a.Score + b.Score) / 2
+	return Verdict{
+		Info:   s.Item(),
+		Pass:   a.Pass && b.Pass,
+		Score:  score,
+		Reason: fmt.Sprintf("A %.2f (%s)；B %.2f (%s)", a.Score, a.Reason, b.Score, b.Reason),
+		Source: "llm",
+	}
 }
