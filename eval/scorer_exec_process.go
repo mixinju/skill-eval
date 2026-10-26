@@ -33,7 +33,7 @@ func (s *ExecProcessScorer) Score(trace ...*agent.Trace) (Verdict, error) {
 	// 构建提示词
 
 	first, second, e := extraTrace(trace...)
-	if e == nil {
+	if e != nil {
 		return Verdict{}, e
 	}
 
@@ -150,9 +150,25 @@ func (s *ExecProcessScorer) single(trace *agent.Trace) (Verdict, error) {
 		Pass:   result.Score >= 0.6,
 		Score:  result.Score,
 		Reason: result.Reason,
+		Source: "llm",
 	}, nil
 }
 
 func (s *ExecProcessScorer) compare(first, second *agent.Trace) (Verdict, error) {
-	return Verdict{}, nil
+	a, errA := s.single(first)
+	b, errB := s.single(second)
+	if errA != nil {
+		return a, errA
+	}
+	if errB != nil {
+		return b, errB
+	}
+	score := (a.Score + b.Score) / 2
+	return Verdict{
+		Info:   s.Item(),
+		Pass:   a.Pass && b.Pass,
+		Score:  score,
+		Reason: fmt.Sprintf("A %.2f (%s)；B %.2f (%s)", a.Score, a.Reason, b.Score, b.Reason),
+		Source: "llm",
+	}, nil
 }
