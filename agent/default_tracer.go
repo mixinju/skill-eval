@@ -35,17 +35,26 @@ func (t *DefaultTracer) GetTrace() *Trace {
 	return t.trace
 }
 
+func newSpanID() string {
+	return uuid.New().String()
+}
+
 func (t *DefaultTracer) OnEvent(event TraceEvent) {
 	event.Timestamp = time.Now()
 
 	switch event.Type {
 	case EventRunStart:
+		runner := event.Runner
+		if runner == "" {
+			runner = RunnerKernel
+		}
 		t.trace = &Trace{
 			ID:          t.Id(),
 			AgentName:   event.AgentName,
 			Model:       event.Model,
 			UserPrompt:  event.UserPrompt,
 			TargetSkill: event.TargetSkill,
+			Runner:      runner,
 			StartTime:   event.Timestamp,
 		}
 		logrus.Infof("[Tracer] Run 开始: %s", t.trace.ID)
@@ -64,7 +73,7 @@ func (t *DefaultTracer) OnEvent(event TraceEvent) {
 
 	case EventLLMStart:
 		span := &Span{
-			SpanID:        t.Id(),
+			SpanID:        newSpanID(),
 			Kind:          SpanKindLLMCall,
 			Name:          "chat_completion",
 			Iteration:     event.Iteration,
@@ -88,7 +97,7 @@ func (t *DefaultTracer) OnEvent(event TraceEvent) {
 
 	case EventLLMCompressStart:
 		span := &Span{
-			SpanID:        t.Id(),
+			SpanID:        newSpanID(),
 			Kind:          SpanKindLLMCompress,
 			Name:          "compress",
 			Iteration:     event.Iteration,
@@ -114,7 +123,7 @@ func (t *DefaultTracer) OnEvent(event TraceEvent) {
 			parentID = t.currentLLM.SpanID
 		}
 		span := &Span{
-			SpanID:    t.Id(),
+			SpanID:    newSpanID(),
 			ParentID:  parentID,
 			Kind:      SpanKindToolCall,
 			Name:      event.ToolName,

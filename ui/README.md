@@ -1,73 +1,54 @@
-# React + TypeScript + Vite
+# Skill Eval 前端
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+评测台。打开一条记录就能看到结果（通过 / 未通过、分数、产物）和执行过程（时间条、步骤、日志）。
 
-Currently, two official plugins are available:
+技术栈沿用原来的 React + TypeScript + Vite。界面不再套 Ant Design 的后台布局，Ant Design 只留下主题容器。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 预览
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd ui
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+锁文件里的 tarball 指向内网源。内网不可达时，可以用公共源安装，不必改锁文件：
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install --registry https://registry.npmjs.org --no-package-lock
 ```
+
+浏览器打开 Vite 打印的本地地址。生产构建：
+
+```bash
+pnpm build
+pnpm preview
+```
+
+`pnpm dev` 和 `pnpm preview` 都会从仓库的 `logs/traces/*.json` 读真实 Trace（DefaultTracer 落下的文件）。如果这个本地读取不可用，页面退回到构建时打包进去的 Trace。
+
+## 执行后端
+
+侧边栏可以按执行后端筛选：
+
+| 标识 | 含义 | 现在有没有数据 |
+| --- | --- | --- |
+| `kernel` | 自研内核 `agent.Orchestrator` | 有。`logs/traces` 里的真实运行。旧文件没有 `runner` 字段，归到这一类并标成「未标注」。 |
+| `codex` | Codex | 没有执行器。列表里那条是界面样例。 |
+| `claude-code` | Claude Code | 没有执行器。列表里那条是界面样例。 |
+
+新的自研内核运行会在 Trace 里写 `runner: "kernel"`。样例可以用侧边栏的「样例」开关隐藏。
+
+## 评分怎么来的
+
+仓库没有评测 HTTP API，`eval.Exec` 只把报告打到标准输出。页面因此分成三种分数：
+
+- **Trace**：按现有规则从 Span 算出来。Skill 是否命中对齐 `SkillHitScorer`（看 `use_skill` 的 `name`）。没有产物时对齐 `ArtifactScorer` 的「未产出任何文件」。是否执行成功看 `Trace.success`，因为 `SuccessScorer` 对单条 Trace 目前返回空结果。
+- **未落盘**：有产物时的质量分，以及执行过程分。这两项要再调模型，页面不编造。
+- **样例**：只出现在 Codex / Claude Code 样例上，用来把评分卡的样子先摆出来。
+
+如果以后把 `eval.Report` 写到 `logs/reports/*.json`（字段与 Go 结构体一致，至少要有 `traceId` 和 `scores`），刷新后会直接用那份报告。
+
+耗时用 Span 的 `startTime` / `endTime`。历史文件里的 `duration` 有的是纳秒。
+
+更完整的说明在页面左下角「数据从哪来」。
