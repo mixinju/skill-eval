@@ -2,6 +2,7 @@ package eval
 
 import (
 	"fmt"
+	"os"
 	"skill-eval/agent"
 	"skill-eval/providers"
 )
@@ -27,21 +28,29 @@ func extraTrace(trace ...*agent.Trace) (firsts, second *agent.Trace, err error) 
 	return trace[0], trace[1], nil
 }
 
+// BuildDefaultScorer 返回默认定评分器。
+// 规则评分器始终启用。配置了 EVAL_API_KEY 时，额外启用大模型裁判，模型名来自 EVAL_JUDGE_MODEL（默认 kimi-2.5）。
 func BuildDefaultScorer() []Scorer {
-
+	s := DeterministicScorers()
+	if os.Getenv("EVAL_API_KEY") == "" {
+		return s
+	}
 	client := providers.NewClient()
-	var s []Scorer
-	processScorer := NewExecProcessScorer(&client, "kimi-2.5")
-	s = append(s, processScorer)
-
-	artifactScorer := NewArtifactScorer(&client, "kimi-2.5")
-
-	hitScorer := NewSkillHitScorer()
-	s = append(s, hitScorer)
-	successScorer := NewSuccessScorer()
-	s = append(s, successScorer)
-
-	s = append(s, artifactScorer)
-
+	model := os.Getenv("EVAL_JUDGE_MODEL")
+	if model == "" {
+		model = "kimi-2.5"
+	}
+	s = append(s, NewExecProcessScorer(&client, model))
+	s = append(s, NewArtifactScorer(&client, model))
 	return s
+}
+
+// DeterministicScorers 不依赖外部模型，适合本地与 CI 复核。
+func DeterministicScorers() []Scorer {
+	return []Scorer{
+		NewSuccessScorer(),
+		NewSkillHitScorer(),
+		NewDeterministicProcessScorer(),
+		NewStaticLintScorer(),
+	}
 }
