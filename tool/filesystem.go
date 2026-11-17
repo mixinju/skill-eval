@@ -36,6 +36,45 @@ func NewFileSystem(allowedPaths []string, deniedPaths []string, timeout time.Dur
 	}
 }
 
+// SetWorkspace 把文件工具限制在同一次评测的工作区内。
+func (f *FileSystem) SetWorkspace(workspace string) {
+	if workspace == "" {
+		return
+	}
+	f.workspace = workspace
+	if len(f.allowedPaths) == 0 {
+		f.allowedPaths = []string{workspace}
+	}
+}
+
+// resolvePath 把用户传入的路径解析到工作区内，拒绝越界访问。
+func (f *FileSystem) resolvePath(path string) (string, error) {
+	if f.workspace == "" {
+		if !f.isAllowed(path) {
+			return "", fmt.Errorf("禁止访问路径: %s", path)
+		}
+		return path, nil
+	}
+	root, err := filepath.Abs(f.workspace)
+	if err != nil {
+		return "", fmt.Errorf("解析工作区失败: %w", err)
+	}
+	var candidate string
+	if filepath.IsAbs(path) {
+		candidate = filepath.Clean(path)
+	} else {
+		candidate = filepath.Clean(filepath.Join(root, path))
+	}
+	rel, err := filepath.Rel(root, candidate)
+	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(os.PathSeparator)) {
+		return "", fmt.Errorf("路径越出工作区: %s", path)
+	}
+	if !f.isAllowed(candidate) {
+		return "", fmt.Errorf("禁止访问路径: %s", path)
+	}
+	return candidate, nil
+}
+
 // ReadFile 读取文件
 func (f *FileSystem) ReadFile(ctx context.Context, params map[string]any) (string, error) {
 	path, ok := params["path"].(string)
@@ -43,12 +82,16 @@ func (f *FileSystem) ReadFile(ctx context.Context, params map[string]any) (strin
 		return "", fmt.Errorf("缺少必填参数: path")
 	}
 
-	ctx, cancelFunc := context.WithTimeout(ctx, f.timeout)
-	defer cancelFunc()
+	if f.timeout > 0 {
+		var cancelFunc context.CancelFunc
+		ctx, cancelFunc = context.WithTimeout(ctx, f.timeout)
+		defer cancelFunc()
+	}
+	_ = ctx
 
-	localPath := filepath.Join(f.workspace, path)
-	if !f.isAllowed(localPath) {
-		return "", fmt.Errorf("禁止访问路径: %s", path)
+	localPath, err := f.resolvePath(path)
+	if err != nil {
+		return "", err
 	}
 
 	content, err := os.ReadFile(localPath)
@@ -71,9 +114,9 @@ func (f *FileSystem) WriteFile(ctx context.Context, params map[string]any) (stri
 		return "", fmt.Errorf("缺少必填参数: content")
 	}
 
-	localPath := filepath.Join(f.workspace, path)
-	if !f.isAllowed(localPath) {
-		return "", fmt.Errorf("禁止访问路径: %s", path)
+	localPath, err := f.resolvePath(path)
+	if err != nil {
+		return "", err
 	}
 
 	dir := filepath.Dir(localPath)
@@ -107,10 +150,9 @@ func (f *FileSystem) EditFile(ctx context.Context, params map[string]any) (strin
 		return "", fmt.Errorf("缺少必填参数: new_string")
 	}
 
-	// 检查路径权限
-	localPath := filepath.Join(f.workspace, path)
-	if !f.isAllowed(localPath) {
-		return "", fmt.Errorf("禁止访问路径: %s", path)
+	localPath, err := f.resolvePath(path)
+	if err != nil {
+		return "", err
 	}
 
 	// 读取文件内容
@@ -148,9 +190,9 @@ func (f *FileSystem) ListDir(ctx context.Context, params map[string]any) (string
 		return "", fmt.Errorf("缺少必填参数: path")
 	}
 
-	localPath := filepath.Join(f.workspace, path)
-	if !f.isAllowed(localPath) {
-		return "", fmt.Errorf("禁止访问路径: %s", path)
+	localPath, err := f.resolvePath(path)
+	if err != nil {
+		return "", err
 	}
 
 	entries, err := os.ReadDir(localPath)

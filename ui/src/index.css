@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-background: #f4f7f5;
+  --color-foreground: #15201b;
+  --color-card: #ffffff;
+  --color-card-foreground: #15201b;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #15201b;
+  --color-primary: #0f6a56;
+  --color-primary-foreground: #f3fbf7;
+  --color-secondary: #e7efe9;
+  --color-secondary-foreground: #1d322a;
+  --color-muted: #e8efea;
+  --color-muted-foreground: #5b6d64;
+  --color-accent: #d9ece4;
+  --color-accent-foreground: #0f6a56;
+  --color-destructive: #b42318;
+  --color-destructive-foreground: #fff7f6;
+  --color-border: #d5e0d9;
+  --color-input: #d5e0d9;
+  --color-ring: #0f6a56;
+  --color-success: #0f7a4d;
+  --color-warning: #9a6700;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 0% -10%, rgba(15, 106, 86, 0.08), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 0%, rgba(21, 32, 27, 0.04), transparent);
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  }
+}
